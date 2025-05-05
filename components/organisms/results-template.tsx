@@ -56,7 +56,7 @@ export const ResultsTemplate = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="h-full bg-gradient-to-b from-blue-50 to-white">
       <motion.div
         className="w-full max-w-6xl mx-auto px-4 py-8"
         initial={{ opacity: 0 }}

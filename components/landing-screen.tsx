@@ -13,7 +13,7 @@ export const LandingScreen = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
+    <div className="h-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
       <motion.div
         className="text-center max-w-2xl"
         initial={{ opacity: 0, y: 20 }}

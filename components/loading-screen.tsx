@@ -89,7 +89,7 @@ export const LoadingScreen = ({ status = "preparing" }: LoadingScreenProps) => {
   }, [status, progressRanges.matching.min]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
+    <div className="h-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
       <motion.div
         className="text-center max-w-md"
         initial={{ opacity: 0, y: 20 }}

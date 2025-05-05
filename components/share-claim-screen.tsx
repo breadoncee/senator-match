@@ -79,7 +79,7 @@ export default function ShareClaimScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-12">
+    <div className="h-full bg-gradient-to-b from-blue-50 to-white px-4 py-12">
       <motion.div
         className="max-w-2xl mx-auto"
         initial={{ opacity: 0 }}

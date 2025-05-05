@@ -11,22 +11,12 @@ function AppContent() {
   const { currentScreen, loadingStatus } = useSurvey();
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-8 h-full">
       {currentScreen === "landing" && <LandingScreen />}
       {currentScreen === "survey" && <SurveyScreen />}
       {currentScreen === "loading" && <LoadingScreen status={loadingStatus} />}
       {currentScreen === "results" && <ResultsScreen />}
       {currentScreen === "share_claim" && <ShareClaimScreen />}
-
-      {/* Add a small link to the random results page in development */}
-      {process.env.NODE_ENV === "development" &&
-        currentScreen === "landing" && (
-          <div className="fixed bottom-2 right-2 text-xs">
-            <Link href="/results" className="text-gray-400 hover:text-gray-600">
-              View Random Results
-            </Link>
-          </div>
-        )}
     </main>
   );
 }

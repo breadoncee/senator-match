@@ -12,7 +12,7 @@ import {
   generateSessionId,
 } from "@/services/matching-service";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, Info, X } from "lucide-react";
+import { ChevronDown, ChevronLeft, Info, X } from "lucide-react";
 import { getQuestionInfo } from "@/utils/issue_translations";
 
 export default function SurveyScreen() {
@@ -418,7 +418,7 @@ export default function SurveyScreen() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
+      className="h-full flex flex-col items-center justify-center relative overflow-hidden"
     >
       {/* Progress bar - fixed at top */}
       <div className="fixed top-0 left-0 w-full z-10">
@@ -443,7 +443,7 @@ export default function SurveyScreen() {
         className="fixed top-4 left-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:bg-gray-100 transition-colors"
         aria-label="Go back"
       >
-        <ChevronUp className="h-5 w-5 text-gray-600" />
+        <ChevronLeft className="h-5 w-5 text-gray-600" />
       </button>
 
       {/* Main content */}
