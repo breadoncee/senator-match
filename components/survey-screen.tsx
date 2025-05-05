@@ -13,7 +13,8 @@ import {
   generateSessionId,
 } from "@/services/matching-service";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Info, X } from "lucide-react";
+import { getQuestionInfo } from "@/utils/issue_translations";
 
 export default function SurveyScreen() {
   const {
@@ -32,8 +33,15 @@ export default function SurveyScreen() {
   const [isNextEnabled, setIsNextEnabled] = useState(false);
   const [direction, setDirection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [showInfo, setShowInfo] = useState(false);
+  const explanationRef = useRef<HTMLDivElement>(null);
 
   const currentQuestion = surveyQuestions[currentQuestionIndex];
+  const questionInfo = getQuestionInfo(currentQuestion?.id || "");
+
+  const toggleInfo = () => {
+    setShowInfo(!showInfo);
+  };
 
   useEffect(() => {
     if (currentQuestion.inputType === "slider") {
@@ -398,6 +406,28 @@ export default function SurveyScreen() {
     }),
   };
 
+  // Animation variants for the explanation dropdown
+  const dropdownVariants = {
+    hidden: {
+      opacity: 0,
+      y: -10,
+      height: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeInOut",
+      },
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      height: "auto",
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
   // Extract the survey submission logic to a separate function
   const handleSubmitSurvey = async () => {
     try {
@@ -495,17 +525,79 @@ export default function SurveyScreen() {
           {currentQuestion.section && (
             <div className="mb-6 text-center">
               <span
-                className={`inline-block px-4 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${getSectionColor()}`}
+                className={`inline-block px-4 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${getSectionColor()} shadow-md`}
               >
                 {currentQuestion.section}
               </span>
             </div>
           )}
 
-          {/* Question */}
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center leading-tight">
-            {currentQuestion.text}
-          </h2>
+          {/* Question with translation and explanation */}
+          <div className="text-center mb-8 relative">
+            <div className="flex items-center justify-center mb-2">
+              <h2 className="text-3xl md:text-4xl font-bold text-center leading-tight">
+                {currentQuestion.text}
+              </h2>
+              <button
+                data-info-button="true"
+                onClick={toggleInfo}
+                className={`ml-2 p-1.5 rounded-full ${
+                  showInfo
+                    ? "bg-blue-500 text-white"
+                    : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                } transition-colors shadow-sm`}
+                aria-label="Show explanation"
+                aria-expanded={showInfo}
+              >
+                <Info className="h-5 w-5" />
+              </button>
+            </div>
+            {questionInfo.tagalog && (
+              <p className="text-lg text-gray-600 italic mt-2">
+                {questionInfo.tagalog}
+              </p>
+            )}
+
+            {/* Explanation dropdown */}
+            <AnimatePresence>
+              {showInfo && (
+                <motion.div
+                  ref={explanationRef}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  variants={dropdownVariants}
+                  className="mt-4 mx-auto max-w-2xl bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden"
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-lg text-blue-700">
+                        About this question
+                      </h3>
+                      <button
+                        onClick={toggleInfo}
+                        className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <p className="text-gray-700 mb-4 text-left">
+                      {questionInfo.explanation}
+                    </p>
+
+                    <div className="bg-blue-50 p-3 rounded-md">
+                      <p className="font-medium text-gray-700 mb-1 text-left">
+                        Tagalog:
+                      </p>
+                      <p className="italic text-gray-600 text-left">
+                        {questionInfo.tagalog}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Input */}
           {renderQuestionInput()}
