@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronLeft, Info, X } from "lucide-react";
 import { getQuestionInfo } from "@/utils/issue_translations";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function SurveyScreen() {
   const {
@@ -27,6 +28,7 @@ export default function SurveyScreen() {
     resetSurvey,
     setLoadingStatus,
   } = useSurvey();
+  const { trackEvent } = useAnalytics();
 
   const [currentAnswer, setCurrentAnswer] = useState<string | string[]>("");
   const [isNextEnabled, setIsNextEnabled] = useState(false);
@@ -368,6 +370,13 @@ export default function SurveyScreen() {
   // Extract the survey submission logic to a separate function
   const handleSubmitSurvey = async () => {
     try {
+      // Track survey submission event
+      trackEvent(
+        "Survey",
+        "Submit_Survey",
+        `Completed_${responses.length}_Questions`
+      );
+
       // Update loading status for each stage
       setLoadingStatus("preparing");
 
@@ -396,6 +405,13 @@ export default function SurveyScreen() {
       // Complete the loading process
       setLoadingStatus("complete");
 
+      // Track matching completion event
+      trackEvent(
+        "Survey",
+        "Matching_Complete",
+        `Matches_Found_${matchResults.length}`
+      );
+
       // Short delay to show the complete state
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -409,6 +425,9 @@ export default function SurveyScreen() {
         error instanceof Error
           ? error.message
           : "There was an error generating your matches.";
+
+      // Track error event
+      trackEvent("Error", "Matching_Error", errorMessage);
 
       alert(`Error: ${errorMessage}\n\nPlease try again.`);
       setCurrentScreen("landing");

@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { UTMProvider } from "../context/utm-context";
+import { AnalyticsProvider } from "../context/analytics-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,7 +39,9 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gradient-to-b from-blue-50 to-white h-screen`}
       >
-        {children}
+        <UTMProvider>
+          <AnalyticsProvider>{children}</AnalyticsProvider>
+        </UTMProvider>
       </body>
     </html>
   );

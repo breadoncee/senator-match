@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { getMatchResultsById } from "@/services/matching-service";
 import type { MatchResult } from "@/services/matching-service";
 import Image from "next/image";
+import UTMHandler from "@/context/utm-handler";
+import { extractUTMParams, getUTMParamsFromStorage } from "@/utils/utm-utils";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function SharedResultsPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +18,13 @@ export default function SharedResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { sessionId: matchRequestId } = useParams<{ sessionId: string }>();
+  const searchParams = useSearchParams();
+  const { trackEvent } = useAnalytics();
+
+  // Extract UTM parameters from query string
+  const utmParams = searchParams
+    ? extractUTMParams(Object.fromEntries(searchParams))
+    : {};
 
   useEffect(() => {
     async function fetchMatchResults() {
@@ -24,10 +34,24 @@ export default function SharedResultsPage() {
         const results = await getMatchResultsById(matchRequestId);
         setMatchResults(results);
         setError(null);
+
+        // Track successful view of shared results
+        trackEvent(
+          "SharedResults",
+          "View_Shared_Results",
+          `Session_${matchRequestId}_Candidates_${results.length}`
+        );
       } catch (err) {
         console.error("Error fetching match results:", err);
         setError(
           "Failed to load the match results. The link may be invalid or expired."
+        );
+
+        // Track error viewing shared results
+        trackEvent(
+          "Error",
+          "Shared_Results_Error",
+          `Session_${matchRequestId}`
         );
       } finally {
         setIsLoading(false);
@@ -35,15 +59,38 @@ export default function SharedResultsPage() {
     }
 
     fetchMatchResults();
-  }, [matchRequestId]);
+  }, [matchRequestId, trackEvent]);
 
   const handleTakeSurvey = () => {
-    router.push("/");
+    // Track when user decides to take survey from shared results
+    trackEvent(
+      "SharedResults",
+      "Take_Survey_From_Shared",
+      `From_Session_${matchRequestId}`
+    );
+
+    // Preserve UTM parameters when redirecting to homepage
+    const storedUtmParams = getUTMParamsFromStorage();
+    const paramEntries = Object.entries(storedUtmParams);
+
+    if (paramEntries.length > 0) {
+      const queryString = paramEntries
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`
+        )
+        .join("&");
+      router.push(`/?${queryString}`);
+    } else {
+      router.push("/");
+    }
   };
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-md flex flex-col items-center justify-center min-h-screen">
+        {/* Store UTM parameters even during loading state */}
+        <UTMHandler utmParams={utmParams} />
         <div className="mb-8">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
         </div>
@@ -55,6 +102,8 @@ export default function SharedResultsPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-md flex flex-col items-center justify-center min-h-screen">
+        {/* Store UTM parameters even during error state */}
+        <UTMHandler utmParams={utmParams} />
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-4">Error Loading Results</h1>
           <p className="text-gray-600 mb-8">{error}</p>
@@ -68,6 +117,9 @@ export default function SharedResultsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-[1600px]">
+      {/* Store UTM parameters in session storage */}
+      <UTMHandler utmParams={utmParams} />
+
       <motion.div
         className="flex flex-col min-h-[80vh]"
         initial={{ opacity: 0 }}

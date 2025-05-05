@@ -4,11 +4,14 @@ import { useSurvey } from "@/context/survey-context";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export const LandingScreen = () => {
   const { setCurrentScreen } = useSurvey();
+  const { trackEvent } = useAnalytics();
 
   const handleStartSurvey = () => {
+    trackEvent("Survey", "Start_Survey", "From_Landing_Page");
     setCurrentScreen("survey");
   };
 
