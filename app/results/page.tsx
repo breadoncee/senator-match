@@ -7,8 +7,8 @@ import {
   matchCandidates,
   generateSessionId,
 } from "@/services/matching-service";
-import ResultsScreen from "@/components/results-screen";
-import LoadingScreen from "@/components/loading-screen";
+import { ResultsScreen } from "@/components/results-screen";
+import { LoadingScreen } from "@/components/loading-screen";
 
 // Generate random responses outside of the component to avoid re-generation on each render
 function generateRandomResponses() {
@@ -64,13 +64,8 @@ function RandomResultsContent() {
   const { setCurrentScreen, addResponse, setMatches, setSessionId } =
     useSurvey();
   const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Only run this effect once
-    if (isInitialized) return;
-    setIsInitialized(true);
-
     async function fetchResults() {
       // Set the current screen to loading
       setCurrentScreen("loading");
@@ -106,7 +101,7 @@ function RandomResultsContent() {
     }
 
     fetchResults();
-  }, [isInitialized]); // Only depend on isInitialized to ensure this runs once
+  }, [addResponse, setMatches, setSessionId, setCurrentScreen]);
 
   if (isLoading) {
     return <LoadingScreen />;

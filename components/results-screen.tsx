@@ -2,7 +2,8 @@
 
 import { useSurvey } from "@/context/survey-context";
 import { ResultsTemplate } from "./organisms/results-template";
-export default function ResultsScreen() {
+
+export const ResultsScreen = () => {
   const { matches, resetSurvey, setCurrentScreen } = useSurvey();
 
   const handleRestart = () => {
@@ -20,4 +21,4 @@ export default function ResultsScreen() {
       onRestart={handleRestart}
     />
   );
-}
+};

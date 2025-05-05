@@ -1,14 +1,11 @@
 import { SectionTitle } from "../atoms/section-title";
+import { type MatchExplanationProps } from "@/types/components/molecules";
 
-type MatchExplanationProps = {
-  explanation: string;
-};
-
-export function MatchExplanation({ explanation }: MatchExplanationProps) {
+export const MatchExplanation = ({ explanation }: MatchExplanationProps) => {
   return (
     <div>
       <SectionTitle>Why This Match</SectionTitle>
       <p className="text-gray-700">{explanation}</p>
     </div>
   );
-}
+};

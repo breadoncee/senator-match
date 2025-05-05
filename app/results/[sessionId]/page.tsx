@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { getMatchResultsById } from "@/services/matching-service";
 import type { MatchResult } from "@/services/matching-service";
+import Image from "next/image";
 
 export default function SharedResultsPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -95,10 +96,12 @@ export default function SharedResultsPage() {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2 sm:gap-3">
                       {candidate.imageUrl && (
-                        <img
+                        <Image
                           src={candidate.imageUrl}
                           alt={candidate.name}
                           className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white"
+                          width={100}
+                          height={100}
                         />
                       )}
                       <CardTitle className="text-sm sm:text-base lg:text-lg">

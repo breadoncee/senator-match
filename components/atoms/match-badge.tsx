@@ -1,11 +1,8 @@
 "use client";
 
-type MatchBadgeProps = {
-  matchScore: number;
-  isTopMatch: boolean;
-};
+import { type MatchBadgeProps } from "@/types/components/atoms";
 
-export function MatchBadge({ matchScore, isTopMatch }: MatchBadgeProps) {
+export const MatchBadge = ({ matchScore, isTopMatch }: MatchBadgeProps) => {
   const percentage = Math.round(matchScore * 100);
   const color = isTopMatch
     ? "text-blue-600"
@@ -33,4 +30,4 @@ export function MatchBadge({ matchScore, isTopMatch }: MatchBadgeProps) {
       </span>
     </div>
   );
-}
+};

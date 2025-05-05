@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-export default function LandingScreen() {
+export const LandingScreen = () => {
   const { setCurrentScreen } = useSurvey();
 
   const handleStartSurvey = () => {
@@ -94,4 +94,4 @@ export default function LandingScreen() {
       </motion.div>
     </div>
   );
-}
+};

@@ -3,27 +3,13 @@
 import { motion } from "framer-motion";
 import { CandidateHeader } from "../molecules/candidate-header";
 import { TopMatchBadge } from "../atoms/top-match-badge";
+import { type CandidateCardProps } from "@/types/components/organisms";
 
-type CandidateCardProps = {
-  candidate: {
-    candidateId: string;
-    name: string;
-    party: string;
-    matchScore: number;
-    keyStances: string[];
-    explanation: string;
-    imageUrl?: string;
-    isTopMatch?: boolean;
-  };
-  onClick: (candidateId: string) => void;
-  isSelected: boolean;
-};
-
-export function CandidateCard({
+export const CandidateCard = ({
   candidate,
   onClick,
   isSelected,
-}: CandidateCardProps) {
+}: CandidateCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -52,4 +38,4 @@ export function CandidateCard({
       </div>
     </motion.div>
   );
-}
+};

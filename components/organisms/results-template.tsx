@@ -8,29 +8,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CandidateCard } from "../organisms/candidate-card";
 import { CandidateDetailView } from "../organisms/candidate-detail-view";
 import { CandidateProfileModal } from "../organisms/candidate-profile-modal";
-import { getCandidateProfile } from "@/services/candidate-profile-service";
-import type { CandidateProfile } from "@/types/candidate-profile";
+import { getCandidateProfile } from "../../services/candidate-profile-service";
+import { type CandidateProfile } from "@/types/candidate-profile";
+import { type ResultsTemplateProps } from "@/types/components/organisms";
 
-type ResultsTemplateProps = {
-  matches: Array<{
-    candidateId: string;
-    name: string;
-    party: string;
-    matchScore: number;
-    keyStances: string[];
-    explanation: string;
-    imageUrl?: string;
-    isTopMatch?: boolean;
-  }>;
-  onShare: () => void;
-  onRestart: () => void;
-};
-
-export function ResultsTemplate({
+export const ResultsTemplate = ({
   matches,
   onShare,
   onRestart,
-}: ResultsTemplateProps) {
+}: ResultsTemplateProps) => {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
     null
   );
@@ -90,8 +76,9 @@ export function ResultsTemplate({
             Your Senator Matches
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto">
-            Based on your responses, we've selected 12 senators that best align
-            with your values and priorities. The top 3 matches are highlighted.{" "}
+            Based on your responses, we&apos;ve selected 12 senators that best
+            align with your values and priorities. The top 3 matches are
+            highlighted.{" "}
             <span className="font-medium">
               Click on any candidate to see detailed information.
             </span>
@@ -182,4 +169,4 @@ export function ResultsTemplate({
       </AnimatePresence>
     </div>
   );
-}
+};

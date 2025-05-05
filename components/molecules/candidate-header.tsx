@@ -2,30 +2,20 @@
 
 import { CandidateImage } from "../atoms/candidate-image";
 import { MatchBadge } from "../atoms/match-badge";
+import { type CandidateHeaderProps } from "@/types/components/molecules";
 
-type CandidateHeaderProps = {
-  name: string;
-  party: string;
-  imageUrl: string;
-  matchScore: number;
-  isTopMatch: boolean;
-  isExpanded: boolean;
-  onClick: () => void;
-};
-
-export function CandidateHeader({
+export const CandidateHeader = ({
   name,
   party,
   imageUrl,
   matchScore,
   isTopMatch,
-  isExpanded,
   onClick,
-}: CandidateHeaderProps) {
+}: CandidateHeaderProps) => {
   return (
     <div className="flex items-center justify-between" onClick={onClick}>
       <div className="flex items-center">
-        <CandidateImage src={imageUrl} alt={name} size="md" />
+        <CandidateImage imageUrl={imageUrl} name={name} />
         <div className="ml-3">
           <h3 className="font-bold text-lg leading-tight">{name}</h3>
           <p className="text-sm text-gray-600 mb-1">{party}</p>
@@ -34,4 +24,4 @@ export function CandidateHeader({
       </div>
     </div>
   );
-}
+};

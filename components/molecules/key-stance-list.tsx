@@ -1,10 +1,7 @@
 import { SectionTitle } from "../atoms/section-title";
+import { type KeyStanceListProps } from "@/types/components/molecules";
 
-type KeyStanceListProps = {
-  stances: string[];
-};
-
-export function KeyStanceList({ stances }: KeyStanceListProps) {
+export const KeyStanceList = ({ stances }: KeyStanceListProps) => {
   return (
     <div>
       <SectionTitle>Key Stances</SectionTitle>
@@ -33,4 +30,4 @@ export function KeyStanceList({ stances }: KeyStanceListProps) {
       </ul>
     </div>
   );
-}
+};

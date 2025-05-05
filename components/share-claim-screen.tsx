@@ -5,25 +5,25 @@ import type React from "react";
 import { useState } from "react";
 import { useSurvey } from "@/context/survey-context";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogDescription,
+// } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
-import { Copy, ArrowLeft, Mail, Share2 } from "lucide-react";
+import { Copy, ArrowLeft, Share2 } from "lucide-react";
 import { Input } from "./ui/input";
 
 export default function ShareClaimScreen() {
   const { sessionId, setCurrentScreen, matches } = useSurvey();
   const { toast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [email, setEmail] = useState("");
+  // const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   // Use match_request_id from the first match if available, otherwise fall back to sessionId
@@ -42,35 +42,37 @@ export default function ShareClaimScreen() {
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
 
-    toast({
+    const copyLinkToast = toast({
       title: "Link copied!",
       description: "The shareable link has been copied to your clipboard.",
     });
+
+    copyLinkToast.dismiss();
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+  // const handleOpenModal = () => {
+  //   setIsModalOpen(true);
+  // };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalOpen(false);
+  // };
 
-  const handleSubmitEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  // const handleSubmitEmail = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  //   // Simulate API call
+  //   await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    toast({
-      title: "Magic link sent!",
-      description: "Check your email for a link to access your results.",
-    });
+  //   toast({
+  //     title: "Magic link sent!",
+  //     description: "Check your email for a link to access your results.",
+  //   });
 
-    setIsSubmitting(false);
-    setIsModalOpen(false);
-  };
+  //   setIsSubmitting(false);
+  //   setIsModalOpen(false);
+  // };
 
   const handleBackToResults = () => {
     setCurrentScreen("results");
@@ -157,30 +159,6 @@ export default function ShareClaimScreen() {
                 )}
               </Button>
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 p-8 rounded-xl shadow-md text-white"
-          >
-            <h2 className="text-xl font-bold mb-2">
-              Want to save your results?
-            </h2>
-            <p className="text-blue-100 mb-6">
-              Create an account to save your matches and get personalized
-              updates about your matched senators.
-            </p>
-            <Button
-              onClick={handleOpenModal}
-              variant="secondary"
-              size="lg"
-              className="w-full"
-            >
-              <Mail className="mr-2 h-5 w-5" />
-              Claim My Results
-            </Button>
           </motion.div>
         </div>
 

@@ -1,9 +1,9 @@
 "use client";
 import { SurveyProvider, useSurvey } from "@/context/survey-context";
-import LandingScreen from "@/components/landing-screen";
+import { LandingScreen } from "@/components/landing-screen";
 import SurveyScreen from "@/components/survey-screen";
-import LoadingScreen from "@/components/loading-screen";
-import ResultsScreen from "@/components/results-screen";
+import { LoadingScreen } from "@/components/loading-screen";
+import { ResultsScreen } from "@/components/results-screen";
 import ShareClaimScreen from "@/components/share-claim-screen";
 import Link from "next/link";
 

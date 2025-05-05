@@ -2,18 +2,14 @@
 
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import type { CandidateProfile } from "@/types/candidate-profile";
+import { CandidateProfileModalProps } from "@/types/components/organisms";
 import { JSX } from "react";
+import Image from "next/image";
 
-type CandidateProfileModalProps = {
-  candidate: CandidateProfile;
-  onClose: () => void;
-};
-
-export function CandidateProfileModal({
+export const CandidateProfileModal = ({
   candidate,
   onClose,
-}: CandidateProfileModalProps) {
+}: CandidateProfileModalProps) => {
   // Calculate age if birth_date is provided
   const calculateAge = (birthDate: string): number => {
     const today = new Date();
@@ -76,7 +72,7 @@ export function CandidateProfileModal({
           {/* Header with basic info */}
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
             <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-              <img
+              <Image
                 src={
                   candidate.imageUrl || "/placeholder.svg?height=128&width=128"
                 }
@@ -88,7 +84,7 @@ export function CandidateProfileModal({
             <div className="text-center md:text-left">
               <h1 className="text-3xl font-bold">{candidate.full_name}</h1>
               {candidate.nickname && (
-                <p className="text-xl text-gray-600">"{candidate.nickname}"</p>
+                <p className="text-xl text-gray-600">{candidate.nickname}</p>
               )}
               <div className="flex flex-wrap gap-3 mt-2 justify-center md:justify-start">
                 <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
@@ -153,9 +149,11 @@ export function CandidateProfileModal({
                     Undergraduate:
                   </span>
                   <ul className="list-disc pl-5 mt-1">
-                    {candidate.education.tertiary.map((edu, index) => (
-                      <li key={index}>{edu}</li>
-                    ))}
+                    {candidate.education.tertiary.map(
+                      (edu: string, index: number) => (
+                        <li key={index}>{edu}</li>
+                      )
+                    )}
                   </ul>
                 </div>
               )}
@@ -177,9 +175,11 @@ export function CandidateProfileModal({
                 Political Experience
               </h2>
               <ul className="list-disc pl-5 space-y-2">
-                {candidate.political_experience.map((exp, index) => (
-                  <li key={index}>{exp}</li>
-                ))}
+                {candidate.political_experience.map(
+                  (exp: string, index: number) => (
+                    <li key={index}>{exp}</li>
+                  )
+                )}
               </ul>
             </div>
           )}
@@ -191,9 +191,11 @@ export function CandidateProfileModal({
                 Notable Legislation
               </h2>
               <ul className="list-disc pl-5 space-y-2">
-                {candidate.notable_legislation.map((law, index) => (
-                  <li key={index}>{law}</li>
-                ))}
+                {candidate.notable_legislation.map(
+                  (law: string, index: number) => (
+                    <li key={index}>{law}</li>
+                  )
+                )}
               </ul>
             </div>
           )}
@@ -205,7 +207,7 @@ export function CandidateProfileModal({
                 Policy Focus Areas
               </h2>
               <div className="flex flex-wrap gap-2">
-                {candidate.policy_focus.map((policy, index) => (
+                {candidate.policy_focus.map((policy: string, index: number) => (
                   <span
                     key={index}
                     className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm"
@@ -289,4 +291,4 @@ export function CandidateProfileModal({
       </motion.div>
     </motion.div>
   );
-}
+};

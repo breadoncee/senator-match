@@ -64,7 +64,6 @@ export type MatchResponse = {
 // Base URL for API
 const API_BASE_URL =
   "https://cyv2izcdgrhprua6xlmzefbp2a0fptfh.lambda-url.ap-southeast-2.on.aws/api";
-
 // Format responses for API submission
 export const formatResponsesForAPI = (
   responses: { questionId: string; answer: string | string[] }[],
@@ -154,18 +153,29 @@ export const matchCandidates = async (
   ) => void
 ): Promise<MatchResult[]> => {
   try {
-    // Call the API to get matches
+    // Update loading status to sending explicitly
     setLoadingStatus?.("sending");
+
+    // Short delay before API call to ensure UI shows sending state
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Call the API to get matches
     const apiMatches = await createMatch(responses);
 
     // Update loading status to matching
     setLoadingStatus?.("matching");
 
-    // Simulate processing time for better UX
+    // Simulate processing time in the matching phase with incremental steps
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Halfway through matching phase - this helps ensure progress beyond 45%
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Update to analyzing
     setLoadingStatus?.("analyzing");
+
+    // Simulate analysis time
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Transform API response to match the expected MatchResult format for the UI
     const results = apiMatches.map((match) => ({
@@ -182,6 +192,8 @@ export const matchCandidates = async (
 
     // Completing
     setLoadingStatus?.("complete");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     return results;
   } catch (error) {
     console.error("Error in matchCandidates:", error);

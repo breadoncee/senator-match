@@ -1,17 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
+import { LoadingScreenProps } from "@/types/components/screens";
 
-type LoadingScreenProps = {
-  status?: "preparing" | "sending" | "matching" | "analyzing" | "complete";
-};
-
-export default function LoadingScreen({
-  status = "preparing",
-}: LoadingScreenProps) {
+export const LoadingScreen = ({ status = "preparing" }: LoadingScreenProps) => {
   const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [lastStatus, setLastStatus] = useState(status);
+
+  // Track when status changes to ensure progress continues
+  useEffect(() => {
+    if (status !== lastStatus) {
+      setLastStatus(status);
+    }
+  }, [status, lastStatus]);
 
   // Status messages for each stage of the process
   const statusMessages = {
@@ -23,13 +26,15 @@ export default function LoadingScreen({
   };
 
   // Progress ranges for each status
-  const progressRanges = {
-    preparing: { min: 0, max: 25 },
-    sending: { min: 25, max: 45 },
-    matching: { min: 45, max: 70 },
-    analyzing: { min: 70, max: 90 },
-    complete: { min: 90, max: 100 },
-  };
+  const progressRanges = useMemo(() => {
+    return {
+      preparing: { min: 0, max: 25 },
+      sending: { min: 25, max: 45 },
+      matching: { min: 45, max: 70 },
+      analyzing: { min: 70, max: 90 },
+      complete: { min: 90, max: 100 },
+    };
+  }, []);
 
   useEffect(() => {
     // Show timeout message after 10 seconds
@@ -40,34 +45,48 @@ export default function LoadingScreen({
     // Set progress based on current status
     const currentRange = progressRanges[status];
 
-    // Only reset to min if we're moving to a higher stage
-    // This prevents the progress from jumping backward
+    // Force progress to at least the minimum of current stage
     setLoadingProgress((prev) => {
-      // If we're in a new status with a higher min than the current progress,
-      // start from that min; otherwise, keep the current progress
-      return prev < currentRange.min ? currentRange.min : prev;
+      return Math.max(prev, currentRange.min);
     });
 
     // Simulate more continuous progress within the current status range
     const interval = setInterval(() => {
       setLoadingProgress((prev) => {
         // Calculate next progress within the current range
-        // Smaller, more consistent increments for smoother animation
         const range = currentRange.max - currentRange.min;
-        // More consistent, smaller increment
-        const increment = range / 30 + Math.random() * (range / 40);
+
+        // Calculate increment - higher increment for "matching" stage
+        const baseIncrement = status === "matching" ? range / 20 : range / 30;
+        const randomFactor = status === "matching" ? range / 25 : range / 40;
+        const increment = baseIncrement + Math.random() * randomFactor;
+
         const next = prev + increment;
 
         // Don't exceed the max for the current status
         return Math.min(next, currentRange.max);
       });
-    }, 300); // More frequent updates for smoother animation
+    }, 250); // More frequent updates for smoother animation
 
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, [status]);
+  }, [status, progressRanges, lastStatus]);
+
+  // Render with a delay when status changes to ensure animation
+  useEffect(() => {
+    if (status === "matching") {
+      // When entering matching stage, ensure we progress beyond 45%
+      const timer = setTimeout(() => {
+        setLoadingProgress((prev) =>
+          Math.max(prev, progressRanges.matching.min + 5)
+        );
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [status, progressRanges.matching.min]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
@@ -140,4 +159,4 @@ export default function LoadingScreen({
       </motion.div>
     </div>
   );
-}
+};

@@ -35,6 +35,12 @@ export default function SurveyScreen() {
 
   const currentQuestion = surveyQuestions[currentQuestionIndex];
 
+  useEffect(() => {
+    if (currentQuestion.inputType === "slider") {
+      setIsNextEnabled(true);
+    }
+  }, [currentQuestionIndex, isNextEnabled, setIsNextEnabled]);
+
   // Scroll to top when question changes
   useEffect(() => {
     if (containerRef.current) {
@@ -62,7 +68,12 @@ export default function SurveyScreen() {
       setCurrentAnswer(currentQuestion.inputType === "checkbox" ? [] : "");
       setIsNextEnabled(false);
     }
-  }, [currentQuestion.id, currentQuestionIndex, responses]);
+  }, [
+    currentQuestion.id,
+    currentQuestionIndex,
+    responses,
+    currentQuestion.inputType,
+  ]);
 
   // Add keyboard navigation
   useEffect(() => {
@@ -70,7 +81,6 @@ export default function SurveyScreen() {
       if (e.key === "Enter" && isNextEnabled) {
         handleNext();
       } else if (e.key === "Backspace" || e.key === "Escape") {
-        console.log("backspace or escape");
         handleBack();
       }
     };
@@ -83,16 +93,22 @@ export default function SurveyScreen() {
     setCurrentAnswer(value);
     setIsNextEnabled(true);
 
-    // Save the response immediately
+    // IMPORTANT: Ensure we save the response properly and synchronously
     addResponse({
       questionId: currentQuestion.id,
       answer: value,
     });
 
-    // Auto-advance after a short delay for radio buttons
+    // For the last question, don't auto-advance but wait for user to click next
+    if (currentQuestionIndex >= surveyQuestions.length - 1) {
+      // Don't auto-advance the last question to ensure response is saved
+      return;
+    }
+
+    // Auto-advance after a short delay for radio buttons (not for the last question)
     setTimeout(() => {
       handleNext();
-    }, 800); // Slightly longer delay for better UX
+    }, 800);
   };
 
   const handleSliderChange = (value: number[]) => {
@@ -117,22 +133,34 @@ export default function SurveyScreen() {
   };
 
   const handleNext = async () => {
-    if (currentQuestion.inputType === "slider") {
-      if (!currentAnswer) {
-        addResponse({
-          questionId: currentQuestion.id,
-          answer: "3",
-        });
-      }
+    // For slider: Save default value if no answer
+    if (currentQuestion.inputType === "slider" && !currentAnswer) {
+      addResponse({
+        questionId: currentQuestion.id,
+        answer: "3",
+      });
     }
 
-    if (currentQuestion.inputType === "checkbox") {
-      if (Array.isArray(currentAnswer) && currentAnswer.length > 0) {
-        addResponse({
-          questionId: currentQuestion.id,
-          answer: currentAnswer,
-        });
-      }
+    // For checkbox: Save if there are selected options
+    if (
+      currentQuestion.inputType === "checkbox" &&
+      Array.isArray(currentAnswer) &&
+      currentAnswer.length > 0
+    ) {
+      addResponse({
+        questionId: currentQuestion.id,
+        answer: currentAnswer,
+      });
+    }
+
+    // For radio: Double check the current answer is saved
+    if (currentQuestion.inputType === "radio" && currentAnswer) {
+      // Always save the current radio answer when moving to next question
+      // This ensures the last question is captured
+      addResponse({
+        questionId: currentQuestion.id,
+        answer: currentAnswer,
+      });
     }
 
     if (currentQuestionIndex < surveyQuestions.length - 1) {
@@ -140,20 +168,30 @@ export default function SurveyScreen() {
       setDirection(1);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Final check to ensure the last question is saved
+      // Final verification for the last question (q19)
+      const lastQuestion = surveyQuestions[surveyQuestions.length - 1];
       const lastQuestionSaved = responses.some(
-        (r) => r.questionId === currentQuestion.id
+        (r) => r.questionId === lastQuestion.id
       );
 
-      if (!lastQuestionSaved) {
-        // Add the last question's response if it hasn't been saved yet
+      if (!lastQuestionSaved && currentAnswer) {
         addResponse({
-          questionId: currentQuestion.id,
+          questionId: lastQuestion.id,
           answer: currentAnswer,
         });
-
-        // Small delay to ensure state is updated
+        // Wait for the state to update
         await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      // Verify all questions are answered before submission
+      const answeredQuestions = new Set(responses.map((r) => r.questionId));
+      const allQuestionsAnswered = surveyQuestions.every((q) =>
+        answeredQuestions.has(q.id)
+      );
+
+      if (!allQuestionsAnswered) {
+        // Some questions weren't answered, but we continue anyway
+        // as we've already decided to show the loading screen
       }
 
       // Survey completed, go to loading screen
@@ -176,42 +214,64 @@ export default function SurveyScreen() {
   const renderQuestionInput = () => {
     switch (currentQuestion.inputType) {
       case "radio":
+        const isLastQuestion =
+          currentQuestionIndex === surveyQuestions.length - 1;
         return (
-          <RadioGroup
-            value={currentAnswer as string}
-            onValueChange={handleRadioChange}
-            className="space-y-4 mt-8 w-full max-w-md mx-auto"
-          >
-            {currentQuestion.options?.map((option) => (
+          <div className="space-y-6 mt-8 w-full max-w-md mx-auto">
+            <RadioGroup
+              value={currentAnswer as string}
+              onValueChange={handleRadioChange}
+              className="space-y-4 w-full"
+            >
+              {currentQuestion.options?.map((option) => (
+                <motion.div
+                  key={option.value}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full"
+                >
+                  <div
+                    className={`flex items-center w-full p-4 rounded-xl border-2 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
+                      currentAnswer === option.value
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-400"
+                    }`}
+                  >
+                    <RadioGroupItem
+                      value={option.value}
+                      id={option.value}
+                      className="mr-3"
+                    />
+                    <Label
+                      htmlFor={option.value}
+                      className="flex-grow cursor-pointer text-lg"
+                    >
+                      {option.label}
+                    </Label>
+                  </div>
+                </motion.div>
+              ))}
+            </RadioGroup>
+
+            {/* Add explicit continue button for the last question */}
+            {isLastQuestion && currentAnswer && (
               <motion.div
-                key={option.value}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="w-full"
+                className="flex justify-center mt-8"
               >
-                <div
-                  className={`flex items-center w-full p-4 rounded-xl border-2 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
-                    currentAnswer === option.value
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-400"
-                  }`}
+                <Button
+                  onClick={handleNext}
+                  size="lg"
+                  className="px-8 py-6 text-lg rounded-full"
                 >
-                  <RadioGroupItem
-                    value={option.value}
-                    id={option.value}
-                    className="mr-3"
-                  />
-                  <Label
-                    htmlFor={option.value}
-                    className="flex-grow cursor-pointer text-lg"
-                  >
-                    {option.label}
-                  </Label>
-                </div>
+                  Complete Survey
+                </Button>
               </motion.div>
-            ))}
-          </RadioGroup>
+            )}
+          </div>
         );
 
       case "slider":
@@ -346,12 +406,20 @@ export default function SurveyScreen() {
 
       // Short delay to show the preparing state
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      setLoadingStatus("sending");
+
+      // Short delay to show the sending state
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setLoadingStatus("matching");
 
       // Generate matches using our API-based service with loading status callback
       const matchResults = await matchCandidates(
         responses,
         surveyQuestions,
-        setLoadingStatus
+        (status) => {
+          // Explicitly update the loading status from the callback
+          setLoadingStatus(status);
+        }
       );
 
       // Generate a session ID for sharing
@@ -369,8 +437,13 @@ export default function SurveyScreen() {
       setCurrentScreen("results");
     } catch (error) {
       console.error("Error generating matches:", error);
-      // Handle error
-      alert("There was an error generating your matches. Please try again.");
+      // Handle error more specifically
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "There was an error generating your matches.";
+
+      alert(`Error: ${errorMessage}\n\nPlease try again.`);
       setCurrentScreen("landing");
     }
   };

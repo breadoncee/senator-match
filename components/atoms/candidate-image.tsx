@@ -1,10 +1,10 @@
-type CandidateImageProps = {
-  src: string;
-  alt: string;
-  size?: "sm" | "md" | "lg";
-};
-
-export function CandidateImage({ src, alt, size = "md" }: CandidateImageProps) {
+import { type CandidateImageProps } from "@/types/components/atoms";
+import Image from "next/image";
+export const CandidateImage = ({
+  imageUrl,
+  name,
+  size = "md",
+}: CandidateImageProps) => {
   const sizeClasses = {
     sm: "w-12 h-12",
     md: "w-16 h-16",
@@ -15,11 +15,13 @@ export function CandidateImage({ src, alt, size = "md" }: CandidateImageProps) {
     <div
       className={`relative ${sizeClasses[size]} rounded-full overflow-hidden bg-gray-200 flex-shrink-0`}
     >
-      <img
-        src={src || "/placeholder.svg?height=100&width=100"}
-        alt={alt}
+      <Image
+        src={imageUrl || "/placeholder.svg"}
+        alt={name}
         className="w-full h-full object-cover"
+        width={100}
+        height={100}
       />
     </div>
   );
-}
+};

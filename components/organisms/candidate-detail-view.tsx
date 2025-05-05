@@ -3,8 +3,7 @@
 import { motion } from "framer-motion";
 import { CandidateImage } from "../atoms/candidate-image";
 import { MatchBadge } from "../atoms/match-badge";
-import { X, UserCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 type CandidateDetailViewProps = {
   candidate: {
@@ -24,7 +23,6 @@ type CandidateDetailViewProps = {
 export function CandidateDetailView({
   candidate,
   onClose,
-  onViewProfile,
 }: CandidateDetailViewProps) {
   return (
     <motion.div
@@ -66,8 +64,8 @@ export function CandidateDetailView({
             >
               <div className="flex flex-col items-center text-center mb-4">
                 <CandidateImage
-                  src={candidate.imageUrl || ""}
-                  alt={candidate.name}
+                  imageUrl={candidate.imageUrl || ""}
+                  name={candidate.name}
                   size="lg"
                 />
                 <h3 className="text-xl font-bold mt-4">{candidate.name}</h3>
@@ -132,7 +130,7 @@ export function CandidateDetailView({
                   Additional Information
                 </h3>
                 <p className="text-gray-700">
-                  This candidate's positions on key issues align with{" "}
+                  This candidate&apos;s positions on key issues align with{" "}
                   {Math.round(candidate.matchScore * 100)}% of your survey
                   responses. Their policy priorities and legislative focus areas
                   match your indicated preferences.
