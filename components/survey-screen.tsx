@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useSurvey } from "@/context/survey-context";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { surveyQuestions } from "@/data/survey-questions";
@@ -43,12 +42,6 @@ export default function SurveyScreen() {
     setShowInfo(!showInfo);
   };
 
-  useEffect(() => {
-    if (currentQuestion.inputType === "slider") {
-      setIsNextEnabled(true);
-    }
-  }, [currentQuestionIndex, isNextEnabled, setIsNextEnabled]);
-
   // Scroll to top when question changes
   useEffect(() => {
     if (containerRef.current) {
@@ -62,8 +55,8 @@ export default function SurveyScreen() {
   // Check if there's a saved response for this question
   useEffect(() => {
     if (currentQuestion.inputType === "checkbox") {
-      setCurrentAnswer("3");
-      setIsNextEnabled(true);
+      setCurrentAnswer([]);
+      setIsNextEnabled(false);
     }
 
     const savedResponse = responses.find(
@@ -74,6 +67,7 @@ export default function SurveyScreen() {
       setIsNextEnabled(true);
     } else {
       setCurrentAnswer(currentQuestion.inputType === "checkbox" ? [] : "");
+      // For radio inputs, we need user selection before enabling next
       setIsNextEnabled(false);
     }
   }, [
@@ -119,15 +113,6 @@ export default function SurveyScreen() {
     }, 800);
   };
 
-  const handleSliderChange = (value: number[]) => {
-    setCurrentAnswer(value[0].toString());
-    addResponse({
-      questionId: currentQuestion.id,
-      answer: value[0].toString(),
-    });
-    setIsNextEnabled(true);
-  };
-
   const handleCheckboxChange = (value: string, checked: boolean) => {
     setCurrentAnswer((prev) => {
       const prevArray = Array.isArray(prev) ? prev : [];
@@ -141,14 +126,6 @@ export default function SurveyScreen() {
   };
 
   const handleNext = async () => {
-    // For slider: Save default value if no answer
-    if (currentQuestion.inputType === "slider" && !currentAnswer) {
-      addResponse({
-        questionId: currentQuestion.id,
-        answer: "3",
-      });
-    }
-
     // For checkbox: Save if there are selected options
     if (
       currentQuestion.inputType === "checkbox" &&
@@ -279,46 +256,6 @@ export default function SurveyScreen() {
                 </Button>
               </motion.div>
             )}
-          </div>
-        );
-
-      case "slider":
-        const value = currentAnswer
-          ? [Number.parseInt(currentAnswer as string)]
-          : [3];
-        return (
-          <div className="space-y-8 mt-8 w-full max-w-md mx-auto">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white p-6 rounded-xl shadow-sm"
-            >
-              <Slider
-                value={value}
-                min={currentQuestion.min || 1}
-                max={currentQuestion.max || 5}
-                step={currentQuestion.step || 1}
-                onValueChange={handleSliderChange}
-                className="mt-6"
-              />
-              <div className="flex justify-between text-sm text-gray-500 mt-4">
-                <span>Not Important</span>
-                <span>Very Important</span>
-              </div>
-              <div className="text-center text-3xl font-medium mt-6 text-blue-600">
-                {value[0]}/5
-              </div>
-            </motion.div>
-            <div className="flex justify-center">
-              <Button
-                onClick={handleNext}
-                size="lg"
-                className="mt-4 px-8 py-6 text-lg rounded-full"
-              >
-                Continue
-              </Button>
-            </div>
           </div>
         );
 
@@ -602,9 +539,8 @@ export default function SurveyScreen() {
           {/* Input */}
           {renderQuestionInput()}
 
-          {/* Next button for radio (handled by auto-advance) and slider (has its own button) */}
+          {/* Next button for radio (handled by auto-advance) */}
           {currentQuestion.inputType !== "radio" &&
-            currentQuestion.inputType !== "slider" &&
             currentQuestion.inputType !== "checkbox" && (
               <Button
                 onClick={handleNext}
