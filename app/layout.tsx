@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   description:
     "Answer a quick survey—no login required—and get your top 3 senator recommendations.",
   generator: "v0.dev",
+  icons: {
+    icon: [{ url: "/logo.png", type: "image/png" }, { url: "/favicon.ico" }],
+    apple: [{ url: "/logo.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
@@ -22,9 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} bg-gradient-to-b from-blue-50 to-white h-screen`}
-      >
+      <body className={`${inter.className} bg-white h-screen`}>
         <GoogleAnalytics gaId="G-LHF2QKMRK2" />
         <UTMProvider>
           <AnalyticsProvider>{children}</AnalyticsProvider>

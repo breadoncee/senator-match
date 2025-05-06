@@ -89,16 +89,16 @@ export const LoadingScreen = ({ status = "preparing" }: LoadingScreenProps) => {
   }, [status, progressRanges.matching.min]);
 
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
+    <div className="h-full w-full flex flex-col items-center justify-center px-4">
       <motion.div
-        className="text-center max-w-md"
+        className="text-center max-w-md pt-16"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className="mb-8 relative">
           <svg
-            className="w-24 h-24 mx-auto text-blue-500"
+            className="w-24 h-24 mx-auto text-primary"
             viewBox="0 0 100 100"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -127,13 +127,15 @@ export const LoadingScreen = ({ status = "preparing" }: LoadingScreenProps) => {
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-bold text-blue-600">
+            <span className="text-xl font-bold text-primary">
               {Math.round(loadingProgress)}%
             </span>
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold mb-4">Finding your perfect match…</h2>
+        <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Finding your perfect match…
+        </h2>
 
         <motion.p
           className="text-gray-600 mb-4"
@@ -147,7 +149,7 @@ export const LoadingScreen = ({ status = "preparing" }: LoadingScreenProps) => {
 
         {showTimeoutMessage && (
           <motion.p
-            className="text-gray-600 mt-6 p-4 bg-blue-50 rounded-lg"
+            className="text-gray-600 mt-6 p-4 bg-primary/5 rounded-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}

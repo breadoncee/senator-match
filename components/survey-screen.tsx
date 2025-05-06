@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronLeft, Info, X } from "lucide-react";
 import { getQuestionInfo } from "@/utils/issue_translations";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function SurveyScreen() {
   const {
@@ -29,6 +30,7 @@ export default function SurveyScreen() {
     setLoadingStatus,
   } = useSurvey();
   const { trackEvent } = useAnalytics();
+  const isMobile = useIsMobile();
 
   const [currentAnswer, setCurrentAnswer] = useState<string | string[]>("");
   const [isNextEnabled, setIsNextEnabled] = useState(false);
@@ -221,8 +223,8 @@ export default function SurveyScreen() {
                   <div
                     className={`flex items-center w-full p-4 rounded-xl border-2 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
                       currentAnswer === option.value
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-blue-400"
+                        ? "border-primary bg-primary/5"
+                        : "border-gray-200 hover:border-primary/60"
                     }`}
                   >
                     <RadioGroupItem
@@ -252,7 +254,7 @@ export default function SurveyScreen() {
                 <Button
                   onClick={handleNext}
                   size="lg"
-                  className="px-8 py-6 text-lg rounded-full"
+                  className="px-8 py-6 text-lg rounded-full bg-secondary hover:bg-secondary/90"
                 >
                   Complete Survey
                 </Button>
@@ -275,7 +277,7 @@ export default function SurveyScreen() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="w-full"
               >
-                <div className="flex items-center w-full p-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md">
+                <div className="flex items-center w-full p-4 rounded-xl border-2 border-gray-200 hover:border-primary/60 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md">
                   <Checkbox
                     id={option.value}
                     checked={selectedValues.includes(option.value)}
@@ -296,9 +298,9 @@ export default function SurveyScreen() {
             <div className="flex justify-center">
               <Button
                 onClick={handleNext}
-                disabled={!isNextEnabled}
+                disabled={selectedValues.length === 0}
                 size="lg"
-                className="mt-6 px-8 py-6 text-lg rounded-full"
+                className="mt-6 px-8 py-6 text-lg rounded-full bg-secondary hover:bg-secondary/90"
               >
                 Continue
               </Button>
@@ -315,17 +317,17 @@ export default function SurveyScreen() {
   const getSectionColor = () => {
     switch (currentQuestion.section) {
       case "Personal Values and Social Issues":
-        return "from-blue-500 to-blue-600";
+        return "from-primary to-secondary";
       case "Policy Priorities":
-        return "from-purple-500 to-purple-600";
+        return "from-secondary to-accent";
       case "Political Experience and Background":
-        return "from-green-500 to-green-600";
+        return "from-accent to-primary";
       case "Legislative Work":
-        return "from-orange-500 to-orange-600";
+        return "from-primary to-accent";
       case "Candidate Preferences":
-        return "from-red-500 to-red-600";
+        return "from-secondary to-primary";
       default:
-        return "from-blue-500 to-blue-600";
+        return "from-primary to-secondary";
     }
   };
 
@@ -439,7 +441,7 @@ export default function SurveyScreen() {
       ref={containerRef}
       className="h-full flex flex-col items-center justify-center relative overflow-hidden"
     >
-      {/* Progress bar - fixed at top */}
+      {/* Progress bar - fixed at top but below the brand accent */}
       <div className="fixed top-0 left-0 w-full z-10">
         <div className="h-1 bg-gray-200 w-full">
           <div
@@ -475,7 +477,7 @@ export default function SurveyScreen() {
           animate="center"
           exit="exit"
           transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
-          className="w-full max-w-3xl mx-auto px-4 py-16 flex flex-col items-center justify-center min-h-screen"
+          className="w-full max-w-3xl mx-auto px-4 py-8 pt-16 flex flex-col items-center justify-center"
         >
           {/* Section indicator */}
           {currentQuestion.section && (
@@ -499,8 +501,8 @@ export default function SurveyScreen() {
                 onClick={toggleInfo}
                 className={`ml-2 p-1.5 rounded-full ${
                   showInfo
-                    ? "bg-blue-500 text-white"
-                    : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                    ? "bg-primary text-white"
+                    : "bg-primary/10 text-primary hover:bg-primary/20"
                 } transition-colors shadow-sm`}
                 aria-label="Show explanation"
                 aria-expanded={showInfo}
@@ -523,11 +525,11 @@ export default function SurveyScreen() {
                   animate="visible"
                   exit="hidden"
                   variants={dropdownVariants}
-                  className="mt-4 mx-auto max-w-2xl bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden"
+                  className="mt-4 mx-auto max-w-2xl bg-white rounded-lg shadow-lg border border-primary/20 overflow-hidden"
                 >
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-lg text-blue-700">
+                      <h3 className="font-semibold text-lg text-primary">
                         About this question
                       </h3>
                       <button
@@ -541,7 +543,7 @@ export default function SurveyScreen() {
                       {questionInfo.explanation}
                     </p>
 
-                    <div className="bg-blue-50 p-3 rounded-md">
+                    <div className="bg-primary/5 p-3 rounded-md">
                       <p className="font-medium text-gray-700 mb-1 text-left">
                         Tagalog:
                       </p>
@@ -565,7 +567,7 @@ export default function SurveyScreen() {
                 onClick={handleNext}
                 disabled={!isNextEnabled}
                 size="lg"
-                className="mt-8 px-8 py-6 text-lg rounded-full"
+                className="mt-8 px-8 py-6 text-lg rounded-full bg-secondary hover:bg-secondary/90"
               >
                 Continue
               </Button>
@@ -573,28 +575,34 @@ export default function SurveyScreen() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Keyboard shortcuts hint */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4 text-xs text-gray-500 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
-        <div className="flex items-center gap-1">
-          <kbd className="px-2 py-1 bg-gray-100 rounded-md">↵</kbd>
-          <span>Continue</span>
+      {/* Keyboard shortcuts hint - hidden on mobile */}
+      {!isMobile && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4 text-xs text-gray-500 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
+          <div className="flex items-center gap-1">
+            <kbd className="px-2 py-1 bg-gray-100 rounded-md">↵</kbd>
+            <span>Continue</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <kbd className="px-2 py-1 bg-gray-100 rounded-md">Esc</kbd>
+            <span>Back</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <kbd className="px-2 py-1 bg-gray-100 rounded-md">Esc</kbd>
-          <span>Back</span>
-        </div>
-      </div>
+      )}
 
       {/* Next indicator - fixed at bottom */}
-      {isNextEnabled && currentQuestion.inputType !== "radio" && (
-        <button
-          onClick={handleNext}
-          className="fixed bottom-16 left-1/2 transform -translate-x-1/2 p-2 rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-colors animate-bounce"
-          aria-label="Next question"
-        >
-          <ChevronDown className="h-6 w-6" />
-        </button>
-      )}
+      {(isNextEnabled ||
+        (currentQuestion.inputType === "checkbox" &&
+          Array.isArray(currentAnswer) &&
+          currentAnswer.length > 0)) &&
+        currentQuestion.inputType !== "radio" && (
+          <button
+            onClick={handleNext}
+            className="fixed bottom-16 left-1/2 transform -translate-x-1/2 p-2 rounded-full bg-secondary text-white shadow-md hover:bg-secondary/90 transition-colors animate-bounce"
+            aria-label="Next question"
+          >
+            <ChevronDown className="h-6 w-6" />
+          </button>
+        )}
     </div>
   );
 }

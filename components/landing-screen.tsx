@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
+import Image from "next/image";
 
 export const LandingScreen = () => {
   const { setCurrentScreen } = useSurvey();
@@ -16,39 +17,15 @@ export const LandingScreen = () => {
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-4">
+    <div className="w-full max-w-2xl">
       <motion.div
-        className="text-center max-w-2xl"
+        className="text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="mb-8">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="w-24 h-24 mx-auto mb-4 bg-blue-500 rounded-full flex items-center justify-center text-white"
-          >
-            <svg
-              className="w-12 h-12"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </motion.div>
-        </div>
-
         <motion.h1
-          className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent"
+          className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -57,7 +34,7 @@ export const LandingScreen = () => {
         </motion.h1>
 
         <motion.p
-          className="text-xl mb-10 text-gray-600"
+          className="text-lg mb-8 text-gray-600"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
@@ -74,7 +51,7 @@ export const LandingScreen = () => {
           <Button
             onClick={handleStartSurvey}
             size="lg"
-            className="px-8 py-6 text-lg rounded-full group"
+            className="px-6 py-5 text-lg rounded-full group bg-secondary hover:bg-secondary/90"
           >
             Start Survey
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -82,16 +59,16 @@ export const LandingScreen = () => {
         </motion.div>
 
         <motion.p
-          className="text-sm text-gray-500 mt-8 flex items-center justify-center gap-2"
+          className="text-sm text-gray-500 mt-6 flex items-center justify-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+          <span className="inline-block w-2 h-2 bg-primary rounded-full"></span>
           No account needed
-          <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+          <span className="inline-block w-2 h-2 bg-secondary rounded-full"></span>
           Anonymous
-          <span className="inline-block w-2 h-2 bg-purple-500 rounded-full"></span>
+          <span className="inline-block w-2 h-2 bg-accent rounded-full"></span>
           2-minute survey
         </motion.p>
       </motion.div>

@@ -56,9 +56,9 @@ export const ResultsTemplate = ({
   };
 
   return (
-    <div className="h-full bg-gradient-to-b from-blue-50 to-white">
+    <div className="h-full w-full">
       <motion.div
-        className="w-full max-w-6xl mx-auto px-4 py-8"
+        className="w-full max-w-7xl mx-auto px-4 py-8 pt-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -68,11 +68,11 @@ export const ResultsTemplate = ({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full flex items-center justify-center text-white"
+            className="w-16 h-16 mx-auto mb-4 bg-secondary rounded-full flex items-center justify-center text-white"
           >
             <Check className="w-8 h-8" />
           </motion.div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Your Senator Matches
           </h1>
           <p className="text-gray-600 max-w-3xl mx-auto">
@@ -109,7 +109,11 @@ export const ResultsTemplate = ({
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-          <Button onClick={onShare} size="lg" className="flex-1 py-6 text-lg">
+          <Button
+            onClick={onShare}
+            size="lg"
+            className="flex-1 py-6 text-lg bg-secondary hover:bg-secondary/90"
+          >
             <Share2 className="mr-2 h-5 w-5" />
             Share Your Results
           </Button>
@@ -118,7 +122,7 @@ export const ResultsTemplate = ({
             variant="outline"
             onClick={onRestart}
             size="lg"
-            className="flex-1 py-6 text-lg"
+            className="flex-1 py-6 text-lg border-primary text-primary hover:bg-primary/10"
           >
             <RefreshCw className="mr-2 h-5 w-5" />
             Take Survey Again
@@ -159,7 +163,7 @@ export const ResultsTemplate = ({
             className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
           >
             <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
-              <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
               <p className="text-lg font-medium">
                 Loading candidate profile...
               </p>

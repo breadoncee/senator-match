@@ -79,7 +79,7 @@ export default function ShareClaimScreen() {
   };
 
   return (
-    <div className="h-full bg-gradient-to-b from-blue-50 to-white px-4 py-12">
+    <div className="h-full px-4 py-12 pt-16">
       <motion.div
         className="max-w-2xl mx-auto"
         initial={{ opacity: 0 }}
@@ -90,7 +90,7 @@ export default function ShareClaimScreen() {
           variant="ghost"
           size="sm"
           onClick={handleBackToResults}
-          className="mb-8 flex items-center text-gray-600 hover:text-blue-600"
+          className="mb-8 flex items-center text-gray-600 hover:text-primary"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Results
@@ -101,11 +101,11 @@ export default function ShareClaimScreen() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-16 h-16 mx-auto mb-4 bg-blue-500 rounded-full flex items-center justify-center text-white"
+            className="w-16 h-16 mx-auto mb-4 bg-secondary rounded-full flex items-center justify-center text-white"
           >
             <Share2 className="h-8 w-8" />
           </motion.div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Share Your Matches
           </h1>
           <p className="text-gray-600">
@@ -131,7 +131,7 @@ export default function ShareClaimScreen() {
               <Button
                 onClick={handleCopyLink}
                 variant={isCopied ? "outline" : "default"}
-                className={isCopied ? "text-green-600 border-green-600" : ""}
+                className={isCopied ? "text-accent border-accent" : ""}
               >
                 {isCopied ? (
                   <>
