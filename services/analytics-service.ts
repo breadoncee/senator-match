@@ -1,6 +1,7 @@
 /**
- * Analytics service for handling Google Analytics events with UTM parameters
+ * Analytics service handling Google Analytics events with UTM parameters using Next.js third-parties
  */
+import { sendGAEvent } from "@next/third-parties/google";
 
 type EventProps = {
   category: string;
@@ -17,11 +18,6 @@ type PageViewProps = {
   utmParams?: Record<string, string>;
 };
 
-// Check if gtag is available (browser environment)
-const isGtagAvailable = (): boolean => {
-  return typeof window !== "undefined" && typeof window.gtag !== "undefined";
-};
-
 /**
  * Send a page view event to Google Analytics
  */
@@ -30,11 +26,11 @@ export const sendPageView = ({
   title,
   utmParams,
 }: PageViewProps): void => {
-  if (!isGtagAvailable()) return;
-
+  // Create page view params
   const pageViewParams: { [key: string]: any } = {
     page_path: path,
-    page_title: title || document.title,
+    page_title:
+      title || (typeof document !== "undefined" ? document.title : ""),
     send_page_view: true,
   };
 
@@ -45,7 +41,8 @@ export const sendPageView = ({
     });
   }
 
-  window.gtag("config", "G-LHF2QKMRK2", pageViewParams);
+  // Use Next.js GA event function
+  sendGAEvent({ name: "page_view", params: pageViewParams });
 };
 
 /**
@@ -59,14 +56,15 @@ export const sendEvent = ({
   nonInteraction = false,
   utmParams,
 }: EventProps): void => {
-  if (!isGtagAvailable()) return;
-
   const eventParams: { [key: string]: any } = {
     event_category: category,
     event_label: label,
-    value: value,
-    non_interaction: nonInteraction,
   };
+
+  // Only add properties if they exist
+  if (value !== undefined) eventParams.value = value;
+  if (nonInteraction !== undefined)
+    eventParams.non_interaction = nonInteraction;
 
   // Add UTM parameters if available
   if (utmParams && Object.keys(utmParams).length > 0) {
@@ -75,5 +73,6 @@ export const sendEvent = ({
     });
   }
 
-  window.gtag("event", action, eventParams);
+  // Use Next.js GA event function
+  sendGAEvent({ name: action, params: eventParams });
 };
