@@ -136,7 +136,6 @@ export default function SharedResultsPage() {
                 alt="Datos Pilipinas Logo"
                 width={80}
                 height={40}
-                className="h-auto"
               />
             </div>
             <div className="text-xs text-gray-500">
@@ -193,7 +192,7 @@ export default function SharedResultsPage() {
                   duration: 0.3,
                   delay: Math.min(index * 0.1, 0.9),
                 }}
-                className="h-full"
+                className="h-full relative"
               >
                 <Card className="overflow-hidden h-full flex flex-col shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px] border-gray-200 bg-white backdrop-blur-sm rounded-xl">
                   <CardHeader className="bg-primary text-white p-3 sm:p-4">
@@ -202,14 +201,14 @@ export default function SharedResultsPage() {
                         {candidate.imageUrl && (
                           <Image
                             src={candidate.imageUrl}
-                            alt={candidate.name}
+                            alt={candidate.ballot_name || candidate.name}
                             className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-white/90 shadow-sm"
                             width={100}
                             height={100}
                           />
                         )}
                         <CardTitle className="text-sm sm:text-base font-semibold">
-                          {candidate.name}
+                          {candidate.ballot_name || candidate.name}
                         </CardTitle>
                       </div>
                       <div className="text-base sm:text-lg font-bold whitespace-nowrap bg-white/20 px-2 py-1 rounded-full">
@@ -220,8 +219,8 @@ export default function SharedResultsPage() {
                       {candidate.party}
                     </p>
                   </CardHeader>
-                  <CardContent className="pt-3 sm:pt-4 p-3 sm:p-4 flex-grow flex flex-col bg-white">
-                    <div className="mb-3 sm:mb-4">
+                  <CardContent className="relative pt-3 sm:pt-4 p-3 sm:p-4 flex-grow flex flex-col bg-white">
+                    <div className="mb-3 sm:mb-4 flex-grow">
                       <h3 className="font-medium text-xs sm:text-sm text-secondary mb-1 sm:mb-2">
                         KEY STANCES
                       </h3>
@@ -239,7 +238,7 @@ export default function SharedResultsPage() {
                       </ul>
                     </div>
 
-                    <div className="mt-2 sm:mt-3">
+                    <div className="mt-auto">
                       <h3 className="font-medium text-xs sm:text-sm text-secondary mb-1 sm:mb-2">
                         WHY THEY MATCHED
                       </h3>
@@ -247,6 +246,27 @@ export default function SharedResultsPage() {
                         {candidate.explanation}
                       </p>
                     </div>
+
+                    {/* Ballot Number Badge - Inside CardContent, bottom right, diagonal upwards */}
+                    {candidate.ballot_number !== undefined && (
+                      <div
+                        className="absolute bottom-0 right-0 z-10 overflow-hidden w-16 h-16 pointer-events-none" // Outer clipping container
+                      >
+                        <div
+                          className="absolute transform -rotate-45 bg-secondary text-white text-[12px] font-semibold flex items-center justify-center shadow-md"
+                          style={{
+                            width: "120%", // Wider for full corner coverage when rotated
+                            paddingTop: "4px",
+                            paddingBottom: "4px",
+                            right: "-20px", // Adjust: Pushes rotated element leftwards from container's right edge
+                            bottom: "35px", // Adjust: Pushes rotated element upwards from container's bottom edge
+                            transformOrigin: "bottom right", // Rotate around this point of the ribbon itself
+                          }}
+                        >
+                          #{candidate.ballot_number}
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>

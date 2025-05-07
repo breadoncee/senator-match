@@ -4,18 +4,10 @@ import { motion } from "framer-motion";
 import { CandidateImage } from "../atoms/candidate-image";
 import { MatchBadge } from "../atoms/match-badge";
 import { X } from "lucide-react";
+import { type Candidate } from "@/types/survey";
 
 type CandidateDetailViewProps = {
-  candidate: {
-    candidateId: string;
-    name: string;
-    party: string;
-    matchScore: number;
-    keyStances: string[];
-    explanation: string;
-    imageUrl?: string;
-    isTopMatch?: boolean;
-  };
+  candidate: Candidate;
   onClose: () => void;
   onViewProfile: (candidateId: string) => void;
 };
@@ -68,7 +60,21 @@ export function CandidateDetailView({
                   name={candidate.name}
                   size="lg"
                 />
-                <h3 className="text-xl font-bold mt-4">{candidate.name}</h3>
+                {candidate.ballot_number !== undefined && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    #{candidate.ballot_number}
+                  </p>
+                )}
+                {candidate.ballot_name &&
+                  candidate.ballot_name !== candidate.name && (
+                    <p className="text-md text-gray-500 mb-1">
+                      {candidate.ballot_name}
+                    </p>
+                  )}
+                <h3 className="text-xl font-bold mt-2 mb-2">
+                  {candidate.name}
+                </h3>
+
                 <p className="text-gray-600">{candidate.party}</p>
                 <div className="mt-2">
                   <MatchBadge

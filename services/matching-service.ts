@@ -12,6 +12,8 @@ type SurveyResponse = {
 export type MatchResult = {
   candidateId: string;
   name: string;
+  ballot_name?: string;
+  ballot_number?: number;
   party: string;
   matchScore: number;
   keyStances: string[];
@@ -46,6 +48,8 @@ export type MatchResponse = {
   match_request_id: string;
   candidate_id: string;
   name: string;
+  ballot_name?: string;
+  ballot_number?: number;
   party: string;
   image_url: string;
   match: Match;
@@ -181,6 +185,8 @@ export const matchCandidates = async (
     const results = apiMatches.map((match) => ({
       candidateId: match.candidate_id,
       name: match.name,
+      ballot_name: match.ballot_name || match.name,
+      ballot_number: match.ballot_number,
       party: match.party || "Independent",
       matchScore: match.match.score,
       keyStances: match.key_stances,
@@ -213,6 +219,8 @@ export const getMatchResultsById = async (
     return apiMatches.map((match) => ({
       candidateId: match.candidate_id,
       name: match.name,
+      ballot_name: match.ballot_name || match.name,
+      ballot_number: match.ballot_number,
       party: match.party || "Independent",
       matchScore: match.match.score,
       keyStances: match.key_stances,

@@ -14,8 +14,7 @@ export const metadata: Metadata = {
     "Answer a quick survey—no login required—and get your top 3 senator recommendations.",
   generator: "v0.dev",
   icons: {
-    icon: [{ url: "/logo.png", type: "image/png" }, { url: "/favicon.ico" }],
-    apple: [{ url: "/logo.png", sizes: "180x180", type: "image/png" }],
+    icon: [{ url: "/logo.png", type: "image/png" }],
   },
 };
 

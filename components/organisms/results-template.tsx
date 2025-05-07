@@ -111,6 +111,20 @@ export const ResultsTemplate = ({
           </CardContent>
         </Card>
 
+        <p className="text-sm text-gray-500 text-center mt-0 mb-10 max-w-3xl mx-auto">
+          For more comprehensive information and data about all senatorial
+          candidates, visit{" "}
+          <a
+            href="https://ph.rappler.com/elections/2025/senatorial-race"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline font-medium"
+          >
+            Rappler&apos;s 2025 Senatorial Race Coverage
+          </a>
+          .
+        </p>
+
         <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
           <Button
             onClick={onShare}

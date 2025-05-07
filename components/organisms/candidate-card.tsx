@@ -27,13 +27,12 @@ export const CandidateCard = ({
     >
       <div className="p-4">
         <CandidateHeader
-          name={candidate.name}
+          name={candidate.ballot_name || candidate.name}
           party={candidate.party}
           imageUrl={candidate.imageUrl || ""}
           matchScore={candidate.matchScore}
           isTopMatch={!!isTopCandidate}
-          isExpanded={isSelected}
-          onClick={() => {}}
+          ballot_number={candidate.ballot_number}
         />
         <TopMatchBadge show={!!isTopCandidate} />
       </div>

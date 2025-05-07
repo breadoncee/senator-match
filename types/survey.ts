@@ -6,6 +6,8 @@ export type SurveyResponse = {
 export type Candidate = {
   candidateId: string;
   name: string;
+  ballot_name?: string;
+  ballot_number?: number;
   party: string;
   matchScore: number;
   keyStances: string[];

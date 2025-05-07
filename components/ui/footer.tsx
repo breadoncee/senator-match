@@ -25,7 +25,8 @@ export function Footer() {
               alt="SenatorMatch Logo"
               width={100}
               height={50}
-              className="h-auto mr-2"
+              priority
+              className="w-[100px] h-[50px] mr-2"
             />
             <span className="text-sm font-semibold text-gray-700">
               SenatorMatch
