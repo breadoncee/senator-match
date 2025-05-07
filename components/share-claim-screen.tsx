@@ -5,25 +5,25 @@ import type React from "react";
 import { useState } from "react";
 import { useSurvey } from "@/context/survey-context";
 import { Button } from "@/components/ui/button";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogDescription,
-// } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
-import { Copy, ArrowLeft, Share2 } from "lucide-react";
+import {
+  Copy,
+  ArrowLeft,
+  Share2,
+  ExternalLink,
+  Mail,
+  CheckCircle,
+} from "lucide-react";
 import { Input } from "./ui/input";
+import { sendResultsByEmail } from "@/services/matching-service";
 
 export default function ShareClaimScreen() {
   const { sessionId, setCurrentScreen, matches } = useSurvey();
   const { toast } = useToast();
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [email, setEmail] = useState("");
-  // const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   // Use match_request_id from the first match if available, otherwise fall back to sessionId
@@ -50,32 +50,49 @@ export default function ShareClaimScreen() {
     copyLinkToast.dismiss();
   };
 
-  // const handleOpenModal = () => {
-  //   setIsModalOpen(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  // };
-
-  // const handleSubmitEmail = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsSubmitting(true);
-
-  //   // Simulate API call
-  //   await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  //   toast({
-  //     title: "Magic link sent!",
-  //     description: "Check your email for a link to access your results.",
-  //   });
-
-  //   setIsSubmitting(false);
-  //   setIsModalOpen(false);
-  // };
-
   const handleBackToResults = () => {
     setCurrentScreen("results");
+  };
+
+  const handleSubmitEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address.",
+      });
+      return;
+    }
+    setIsSubmitting(true);
+
+    const sendingToastControls = toast({
+      title: "Sending Email...",
+      description: "Processing your request. Please wait a moment.",
+    });
+
+    try {
+      const responseData = await sendResultsByEmail({
+        email,
+        match_request_id: matchRequestId || "",
+      });
+
+      sendingToastControls.update({
+        title: "Email Sent Successfully! ✅",
+        description:
+          responseData.message ||
+          "Your results will be sent to your email shortly.",
+      });
+      setEmail("");
+    } catch (error: any) {
+      console.error("Failed to send results email:", error);
+      sendingToastControls.update({
+        title: "Error Sending Results ❌",
+        description: error.message || "Something went wrong. Please try again.",
+      });
+    } finally {
+      sendingToastControls.dismiss();
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -160,6 +177,72 @@ export default function ShareClaimScreen() {
               </Button>
             </div>
           </motion.div>
+
+          {/* Inline Email Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.5 }}
+            className="bg-white p-6 rounded-xl shadow-md mt-8"
+          >
+            <h2 className="text-lg font-semibold mb-4">
+              Save Results by Email
+            </h2>
+            <form onSubmit={handleSubmitEmail} className="space-y-3">
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                required
+                className="bg-gray-50"
+              />
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-white group"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  "Sending..."
+                ) : (
+                  <>
+                    Send Magic Link
+                    <Mail className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </motion.div>
+
+          {/* Ballot Builder Promotion */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }} // Adjusted delay
+            className="bg-white p-6 rounded-xl shadow-md text-center mt-8 pt-6 border-t border-gray-100" // Added top border and padding top
+          >
+            <h2 className="text-xl font-semibold mb-3 text-primary">
+              Plan Your Vote for 2025!
+            </h2>
+            <p className="text-gray-600 mb-5 text-sm">
+              Want to build your complete ballot for the upcoming elections?
+              Visit our partner site to prepare for all national positions.
+            </p>
+            <Button
+              onClick={() => {
+                window.open(
+                  "https://kodigoeleksyon2025.netlify.app/national?utm_source=candidatematch&utm_medium=website&utm_campaign=national_info",
+                  "_blank"
+                );
+              }}
+              className="bg-secondary hover:bg-secondary/90 text-white px-6 py-3 text-base rounded-lg group" // Changed from bg-accent
+              size="lg" // Made button larger
+            >
+              Go to Kodigo Eleksyon 2025
+              <ExternalLink className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />{" "}
+              {/* Added Icon */}
+            </Button>
+          </motion.div>
         </div>
 
         <p className="text-sm text-gray-500 text-center mt-10">
@@ -167,39 +250,6 @@ export default function ShareClaimScreen() {
           about your matched senators.
         </p>
       </motion.div>
-
-      {/* TODO: Add back in when we have a backend */}
-      {/* <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Save Your Results</DialogTitle>
-            <DialogDescription>
-              Enter your email to save your results and access them anytime.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleSubmitEmail} className="space-y-4 mt-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">
-                Email address
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="your@email.com"
-                className="w-full"
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Sending..." : "Send Magic Link"}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog> */}
 
       <Toaster />
     </div>

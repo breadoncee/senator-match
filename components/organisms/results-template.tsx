@@ -68,7 +68,7 @@ export const ResultsTemplate = ({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-16 h-16 mx-auto mb-4 bg-secondary rounded-full flex items-center justify-center text-white"
+            className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center text-white"
           >
             <Check className="w-8 h-8" />
           </motion.div>
@@ -85,10 +85,12 @@ export const ResultsTemplate = ({
           </p>
         </div>
 
-        <Card className="border-2 border-gray-300 rounded-xl overflow-hidden mb-8">
+        <Card className="border-2 border-primary/30 rounded-xl overflow-hidden mb-8">
           <CardContent className="p-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold">Your Senatorial Ballot</h2>
+              <h2 className="text-2xl font-bold text-primary">
+                Your Senatorial Ballot
+              </h2>
               <p className="text-gray-500">
                 These candidates have been pre-selected based on your
                 preferences
@@ -96,12 +98,13 @@ export const ResultsTemplate = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {matches.map((candidate) => (
+              {matches.map((candidate, index) => (
                 <CandidateCard
                   key={candidate.candidateId}
                   candidate={candidate}
                   onClick={handleCandidateClick}
                   isSelected={candidate.candidateId === selectedCandidateId}
+                  isTopCandidate={index < 3}
                 />
               ))}
             </div>
@@ -130,7 +133,8 @@ export const ResultsTemplate = ({
         </div>
 
         <p className="text-sm text-gray-500 text-center mt-6 mb-8">
-          Your responses are anonymous and not stored beyond this session.
+          Your responses are stored to help us improve the matching process and
+          provide better results in the future.
         </p>
       </motion.div>
 

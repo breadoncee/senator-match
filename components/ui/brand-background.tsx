@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { EasingFunction, motion, useAnimation } from "framer-motion";
 import { useSurvey } from "@/context/survey-context";
 
 export function BrandBackground({
@@ -19,7 +19,7 @@ export function BrandBackground({
     currentScreen = survey.currentScreen;
     currentQuestionIndex = survey.currentQuestionIndex || 0;
   } catch (e) {
-    // We're outside a SurveyProvider, use the provided screenType or default
+    console.error(e);
   }
 
   const controls1 = useAnimation();
@@ -80,7 +80,7 @@ export function BrandBackground({
             duration: randomDuration,
             repeat: Infinity,
             repeatType: "mirror" as const,
-            ease: randomEasing as any,
+            ease: randomEasing as unknown as EasingFunction,
           },
         };
       };

@@ -22,14 +22,14 @@ function AppContent() {
     : {};
 
   return (
-    <div className="h-full w-screen flex flex-col relative overflow-hidden">
+    <div className="h-full w-screen flex flex-col relative overflow-y-auto">
       {/* Store UTM parameters in session storage */}
       <UTMHandler utmParams={utmParams} />
 
       {/* Floating background shapes */}
       <BrandBackground screenType={currentScreen} />
 
-      <div className="w-full flex-1 flex items-center justify-center container mx-auto px-4 relative z-10 overflow-auto">
+      <div className="w-full flex-1 flex items-center justify-center container mx-auto relative z-10">
         {currentScreen === "landing" && <LandingScreen />}
         {currentScreen === "survey" && <SurveyScreen />}
         {currentScreen === "loading" && (
@@ -47,9 +47,7 @@ function AppContent() {
 export default function Home() {
   return (
     <Suspense>
-      <SurveyProvider>
-        <AppContent />
-      </SurveyProvider>
+      <AppContent />
     </Suspense>
   );
 }

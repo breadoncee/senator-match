@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
-import Image from "next/image";
 
 export const LandingScreen = () => {
   const { setCurrentScreen } = useSurvey();
@@ -17,7 +16,7 @@ export const LandingScreen = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl">
+    <div className="w-full px-4 max-w-2xl">
       <motion.div
         className="text-center"
         initial={{ opacity: 0, y: 20 }}
@@ -39,7 +38,7 @@ export const LandingScreen = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          Answer a quick survey—no login required—and get your top 3 senator
+          Answer a quick survey—no login required—and get your top 12 senator
           recommendations.
         </motion.p>
 

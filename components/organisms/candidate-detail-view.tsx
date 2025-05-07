@@ -41,11 +41,11 @@ export function CandidateDetailView({
         className="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-4xl max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-4 border-b bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-          <h2 className="text-xl font-bold">Candidate Details</h2>
+        <div className="flex justify-between items-center p-4 border-b bg-gray-100 text-white">
+          <h2 className="text-xl font-bold text-primary">Candidate Details</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-white/20 transition-colors"
+            className="p-1 rounded-full text-gray-500 hover:text-primary hover:bg-gray-200 transition-colors"
             aria-label="Close details"
           >
             <X className="h-6 w-6" />
@@ -58,7 +58,7 @@ export function CandidateDetailView({
             <div
               className={`p-6 rounded-xl border-2 ${
                 candidate.isTopMatch
-                  ? "border-blue-500 bg-blue-50"
+                  ? "border-primary bg-primary/10"
                   : "border-gray-200"
               }`}
             >
@@ -79,7 +79,7 @@ export function CandidateDetailView({
               </div>
 
               {candidate.isTopMatch && (
-                <div className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full text-center">
+                <div className="bg-primary/10 text-gray-800 text-sm font-medium px-3 py-1 rounded-full text-center">
                   Top Match
                 </div>
               )}
@@ -90,14 +90,14 @@ export function CandidateDetailView({
           <div className="flex-grow">
             <div className="space-y-8">
               <div>
-                <h3 className="text-lg font-bold text-blue-600 uppercase mb-3">
+                <h3 className="text-lg font-bold text-primary uppercase mb-3">
                   Why This Match
                 </h3>
                 <p className="text-gray-700">{candidate.explanation}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-blue-600 uppercase mb-3">
+                <h3 className="text-lg font-bold text-primary uppercase mb-3">
                   Key Stances
                 </h3>
                 <ul className="space-y-2">
@@ -126,7 +126,7 @@ export function CandidateDetailView({
               </div>
 
               <div className="pt-4 border-t border-gray-200">
-                <h3 className="text-lg font-bold text-blue-600 uppercase mb-3">
+                <h3 className="text-lg font-bold text-primary uppercase mb-3">
                   Additional Information
                 </h3>
                 <p className="text-gray-700">

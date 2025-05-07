@@ -226,3 +226,33 @@ export const getMatchResultsById = async (
     throw error;
   }
 };
+
+export type SendResultsEmailPayload = {
+  email: string;
+  match_request_id: string;
+};
+
+export type SendResultsEmailResponse = {
+  message: string;
+};
+
+export const sendResultsByEmail = async (
+  payload: SendResultsEmailPayload
+): Promise<SendResultsEmailResponse> => {
+  const response = await fetch(`${API_BASE_URL}/match/send-results`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    // Throw an error with the message from the API, or a default one
+    throw new Error(data.message || "Failed to send results email.");
+  }
+
+  return data;
+};

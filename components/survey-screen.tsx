@@ -12,7 +12,7 @@ import {
   generateSessionId,
 } from "@/services/matching-service";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronLeft, Info, X } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Info, X } from "lucide-react";
 import { getQuestionInfo } from "@/utils/issue_translations";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -38,6 +38,11 @@ export default function SurveyScreen() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showInfo, setShowInfo] = useState(false);
   const explanationRef = useRef<HTMLDivElement>(null);
+  const [showButton, setShowButton] = useState(false);
+  const [userChangedAnswer, setUserChangedAnswer] = useState(false);
+  const motionDivRef = useRef<HTMLDivElement>(null);
+  const [applyJustifyCenter, setApplyJustifyCenter] = useState(true);
+  const [showScrollDownButton, setShowScrollDownButton] = useState(false);
 
   const currentQuestion = surveyQuestions[currentQuestionIndex];
   const questionInfo = getQuestionInfo(currentQuestion?.id || "");
@@ -48,10 +53,10 @@ export default function SurveyScreen() {
 
   // Scroll to top when question changes
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
+    if (motionDivRef.current) {
+      motionDivRef.current.scrollTo({
         top: 0,
-        behavior: "smooth",
+        behavior: "auto",
       });
     }
   }, [currentQuestionIndex]);
@@ -81,6 +86,22 @@ export default function SurveyScreen() {
     currentQuestion.inputType,
   ]);
 
+  // Modify the useEffect that controls showButton to make it appear whenever a question has an existing answer
+  useEffect(() => {
+    // Show button whenever there's a saved answer for this question
+    const savedResponse = responses.find(
+      (r) => r.questionId === currentQuestion.id
+    );
+
+    // Set showButton to true if there's a saved answer
+    // Don't rely on direction anymore
+    if (savedResponse) {
+      setShowButton(true);
+    } else {
+      setShowButton(false);
+    }
+  }, [currentQuestionIndex, currentQuestion.id, responses]);
+
   // Add keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -95,9 +116,79 @@ export default function SurveyScreen() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
 
+  // Reset the userChangedAnswer state when moving to a new question
+  useEffect(() => {
+    setUserChangedAnswer(false);
+  }, [currentQuestionIndex]);
+
+  // Effect to check for overflow in motion.div and conditionally center
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (motionDivRef.current) {
+        const el = motionDivRef.current;
+        if (el.scrollHeight > el.clientHeight) {
+          setApplyJustifyCenter(false); // Content overflows, align to start
+        } else {
+          setApplyJustifyCenter(true); // Content does not overflow, center it
+        }
+      }
+    };
+
+    // Check initially and on resize
+    // A small delay helps ensure layout is stable after content changes/animations
+    const timeoutId = setTimeout(checkOverflow, 50);
+    window.addEventListener("resize", checkOverflow);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [currentQuestionIndex, currentQuestion.id, motionDivRef]);
+
+  // Effect to manage visibility of the scroll-down button
+  useEffect(() => {
+    const scrollableElement = motionDivRef.current;
+    if (!scrollableElement) {
+      setShowScrollDownButton(false); // Ensure button is hidden if no scrollable element
+      return;
+    }
+
+    const checkScrollPosition = () => {
+      const isScrollable =
+        scrollableElement.scrollHeight > scrollableElement.clientHeight;
+      const isAtBottom =
+        scrollableElement.scrollHeight -
+          scrollableElement.scrollTop -
+          scrollableElement.clientHeight <
+        1;
+
+      if (isScrollable && !isAtBottom) {
+        setShowScrollDownButton(true);
+      } else {
+        setShowScrollDownButton(false);
+      }
+    };
+
+    // Initial check + on resize and scroll
+    const timeoutId = setTimeout(checkScrollPosition, 100); // Delay to allow layout to settle
+    scrollableElement.addEventListener("scroll", checkScrollPosition);
+    window.addEventListener("resize", checkScrollPosition);
+
+    return () => {
+      clearTimeout(timeoutId);
+      scrollableElement.removeEventListener("scroll", checkScrollPosition);
+      window.removeEventListener("resize", checkScrollPosition);
+    };
+  }, [currentQuestionIndex, motionDivRef, applyJustifyCenter]); // Re-check when content or layout might change
+
   const handleRadioChange = (value: string) => {
     setCurrentAnswer(value);
     setIsNextEnabled(true);
+
+    // Immediately hide the button when user selects a new answer
+    setShowButton(false);
+    // Mark that user has made a new selection on this question
+    setUserChangedAnswer(true);
 
     // IMPORTANT: Ensure we save the response properly and synchronously
     addResponse({
@@ -127,6 +218,9 @@ export default function SurveyScreen() {
       }
     });
     setIsNextEnabled(true);
+    setShowButton(false);
+    // Mark that user has made a new selection on this question
+    setUserChangedAnswer(true);
   };
 
   const handleNext = async () => {
@@ -221,7 +315,7 @@ export default function SurveyScreen() {
                   className="w-full"
                 >
                   <div
-                    className={`flex items-center w-full p-4 rounded-xl border-2 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
+                    className={`flex items-center w-full p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
                       currentAnswer === option.value
                         ? "border-primary bg-primary/5"
                         : "border-gray-200 hover:border-primary/60"
@@ -234,7 +328,7 @@ export default function SurveyScreen() {
                     />
                     <Label
                       htmlFor={option.value}
-                      className="flex-grow cursor-pointer text-lg"
+                      className="flex-grow cursor-pointer text-base sm:text-lg"
                     >
                       {option.label}
                     </Label>
@@ -254,7 +348,7 @@ export default function SurveyScreen() {
                 <Button
                   onClick={handleNext}
                   size="lg"
-                  className="px-8 py-6 text-lg rounded-full bg-secondary hover:bg-secondary/90"
+                  className="px-6 py-3 text-base sm:px-8 sm:py-4 sm:text-lg rounded-full bg-secondary hover:bg-secondary/90"
                 >
                   Complete Survey
                 </Button>
@@ -277,7 +371,7 @@ export default function SurveyScreen() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="w-full"
               >
-                <div className="flex items-center w-full p-4 rounded-xl border-2 border-gray-200 hover:border-primary/60 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md">
+                <div className="flex items-center w-full p-3 sm:p-4 rounded-xl border-2 border-gray-200 hover:border-primary/60 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md">
                   <Checkbox
                     id={option.value}
                     checked={selectedValues.includes(option.value)}
@@ -288,7 +382,7 @@ export default function SurveyScreen() {
                   />
                   <Label
                     htmlFor={option.value}
-                    className="flex-grow cursor-pointer text-lg"
+                    className="flex-grow cursor-pointer text-base sm:text-lg"
                   >
                     {option.label}
                   </Label>
@@ -298,9 +392,9 @@ export default function SurveyScreen() {
             <div className="flex justify-center">
               <Button
                 onClick={handleNext}
-                disabled={selectedValues.length === 0}
+                disabled={!isNextEnabled}
                 size="lg"
-                className="mt-6 px-8 py-6 text-lg rounded-full bg-secondary hover:bg-secondary/90"
+                className="mt-6 px-6 py-3 text-base sm:px-8 sm:py-4 sm:text-lg rounded-full bg-secondary hover:bg-secondary/90"
               >
                 Continue
               </Button>
@@ -437,12 +531,9 @@ export default function SurveyScreen() {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full flex flex-col items-center justify-center relative overflow-hidden"
-    >
-      {/* Progress bar - fixed at top but below the brand accent */}
-      <div className="fixed top-0 left-0 w-full z-10">
+    <div className="h-full w-full flex flex-col overflow-x-hidden">
+      {/* Progress bar - fixed at the very top */}
+      <div className="fixed top-0 left-0 right-0 w-full z-20">
         <div className="h-1 bg-gray-200 w-full">
           <div
             className={`h-full bg-gradient-to-r ${getSectionColor()} transition-all duration-500`}
@@ -458,7 +549,7 @@ export default function SurveyScreen() {
         </div>
       </div>
 
-      {/* Back button - fixed at top left */}
+      {/* Back button - fixed */}
       <button
         onClick={handleBack}
         className="fixed top-4 left-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:bg-gray-100 transition-colors"
@@ -467,117 +558,147 @@ export default function SurveyScreen() {
         <ChevronLeft className="h-5 w-5 text-gray-600" />
       </button>
 
-      {/* Main content */}
-      <AnimatePresence custom={direction} mode="wait">
-        <motion.div
-          key={currentQuestionIndex}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
-          className="w-full max-w-3xl mx-auto px-4 py-8 pt-16 flex flex-col items-center justify-center"
-        >
-          {/* Section indicator */}
-          {currentQuestion.section && (
-            <div className="mb-6 text-center">
-              <span
-                className={`inline-block px-4 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${getSectionColor()} shadow-md`}
-              >
-                {currentQuestion.section}
-              </span>
-            </div>
-          )}
-
-          {/* Question with translation and explanation */}
-          <div className="text-center mb-8 relative">
-            <div className="flex items-center justify-center mb-2">
-              <h2 className="text-3xl md:text-4xl font-bold text-center leading-tight">
-                {currentQuestion.text}
-              </h2>
-              <button
-                data-info-button="true"
-                onClick={toggleInfo}
-                className={`ml-2 p-1.5 rounded-full ${
-                  showInfo
-                    ? "bg-primary text-white"
-                    : "bg-primary/10 text-primary hover:bg-primary/20"
-                } transition-colors shadow-sm`}
-                aria-label="Show explanation"
-                aria-expanded={showInfo}
-              >
-                <Info className="h-5 w-5" />
-              </button>
-            </div>
-            {questionInfo.tagalog && (
-              <p className="text-lg text-gray-600 italic mt-2">
-                {questionInfo.tagalog}
-              </p>
-            )}
-
-            {/* Explanation dropdown */}
-            <AnimatePresence>
-              {showInfo && (
-                <motion.div
-                  ref={explanationRef}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={dropdownVariants}
-                  className="mt-4 mx-auto max-w-2xl bg-white rounded-lg shadow-lg border border-primary/20 overflow-hidden"
+      {/* Main scrollable container - centered both horizontally and vertically */}
+      <div
+        ref={containerRef}
+        className="relative h-full w-full overflow-hidden md:pt-12 md:pb-12"
+        style={{
+          boxSizing: "border-box",
+          width: "100%",
+          maxWidth: "100%",
+        }}
+      >
+        <AnimatePresence custom={direction} mode="wait">
+          <motion.div
+            key={currentQuestionIndex}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
+            ref={motionDivRef}
+            className={`w-full h-full max-w-3xl mx-auto p-8 flex flex-col items-center ${
+              applyJustifyCenter ? "justify-center" : ""
+            } overflow-y-auto`}
+          >
+            {/* Section indicator */}
+            {currentQuestion.section && (
+              <div className="mb-6 text-center">
+                <span
+                  className={`inline-block px-4 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${getSectionColor()} shadow-md`}
                 >
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-lg text-primary">
-                        About this question
-                      </h3>
-                      <button
-                        onClick={toggleInfo}
-                        className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
-                    </div>
-                    <p className="text-gray-700 mb-4 text-left">
-                      {questionInfo.explanation}
-                    </p>
-
-                    <div className="bg-primary/5 p-3 rounded-md">
-                      <p className="font-medium text-gray-700 mb-1 text-left">
-                        Tagalog:
-                      </p>
-                      <p className="italic text-gray-600 text-left">
-                        {questionInfo.tagalog}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Input */}
-          {renderQuestionInput()}
-
-          {/* Next button for radio (handled by auto-advance) */}
-          {currentQuestion.inputType !== "radio" &&
-            currentQuestion.inputType !== "checkbox" && (
-              <Button
-                onClick={handleNext}
-                disabled={!isNextEnabled}
-                size="lg"
-                className="mt-8 px-8 py-6 text-lg rounded-full bg-secondary hover:bg-secondary/90"
-              >
-                Continue
-              </Button>
+                  {currentQuestion.section}
+                </span>
+              </div>
             )}
-        </motion.div>
-      </AnimatePresence>
 
-      {/* Keyboard shortcuts hint - hidden on mobile */}
+            {/* Question with translation and explanation */}
+            <div className="text-center mb-8 relative">
+              <div className="flex items-center justify-center mb-2">
+                <h2 className="text-3xl md:text-4xl font-bold text-center leading-tight">
+                  {currentQuestion.text}
+                </h2>
+                <button
+                  data-info-button="true"
+                  onClick={toggleInfo}
+                  className={`ml-2 p-1.5 rounded-full ${
+                    showInfo
+                      ? "bg-primary text-white"
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  } transition-colors shadow-sm`}
+                  aria-label="Show explanation"
+                  aria-expanded={showInfo}
+                >
+                  <Info className="h-5 w-5" />
+                </button>
+              </div>
+              {questionInfo.tagalog && (
+                <p className="text-lg text-gray-600 italic mt-2">
+                  {questionInfo.tagalog}
+                </p>
+              )}
+
+              {/* Explanation dropdown */}
+              <AnimatePresence>
+                {showInfo && (
+                  <motion.div
+                    ref={explanationRef}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    variants={dropdownVariants}
+                    className="mt-4 mx-auto max-w-2xl bg-white rounded-lg shadow-lg border border-primary/20 overflow-hidden"
+                  >
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold text-lg text-primary">
+                          About this question
+                        </h3>
+                        <button
+                          onClick={toggleInfo}
+                          className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </div>
+                      <p className="text-sm sm:text-base text-gray-700 mb-4 text-left">
+                        {questionInfo.explanation}
+                      </p>
+
+                      <div className="bg-primary/5 p-3 rounded-md">
+                        <p className="font-medium text-gray-700 mb-1 text-left">
+                          Tagalog:
+                        </p>
+                        <p className="text-sm sm:text-base italic text-gray-600 text-left">
+                          {questionInfo.tagalog}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Input */}
+            {renderQuestionInput()}
+
+            {isMobile &&
+              showButton &&
+              currentQuestion.inputType === "radio" &&
+              !userChangedAnswer && (
+                <motion.button
+                  onClick={handleNext}
+                  className="p-3 mt-4 rounded-full bg-secondary text-white shadow-md hover:bg-secondary/90 transition-colors z-20"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.5 }}
+                  key={`mobile-next-${currentQuestionIndex}`}
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </motion.button>
+              )}
+
+            {/* Other buttons */}
+            {currentQuestion.inputType !== "radio" &&
+              currentQuestion.inputType !== "checkbox" && (
+                <Button
+                  onClick={handleNext}
+                  disabled={!isNextEnabled}
+                  size="lg"
+                  className="mt-8 px-6 py-3 text-base sm:px-8 sm:py-4 sm:text-lg rounded-full bg-secondary hover:bg-secondary/90"
+                >
+                  Continue
+                </Button>
+              )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Keyboard shortcuts hint - fixed at bottom */}
       {!isMobile && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4 text-xs text-gray-500 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4 text-xs text-gray-500 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm z-10">
           <div className="flex items-center gap-1">
             <kbd className="px-2 py-1 bg-gray-100 rounded-md">↵</kbd>
             <span>Continue</span>
@@ -589,19 +710,31 @@ export default function SurveyScreen() {
         </div>
       )}
 
-      {/* Next indicator - fixed at bottom */}
-      {(isNextEnabled ||
-        (currentQuestion.inputType === "checkbox" &&
-          Array.isArray(currentAnswer) &&
-          currentAnswer.length > 0)) &&
-        currentQuestion.inputType !== "radio" && (
-          <button
-            onClick={handleNext}
-            className="fixed bottom-16 left-1/2 transform -translate-x-1/2 p-2 rounded-full bg-secondary text-white shadow-md hover:bg-secondary/90 transition-colors animate-bounce"
-            aria-label="Next question"
-          >
-            <ChevronDown className="h-6 w-6" />
-          </button>
+      {/* Next indicator - fixed at bottom - Now a scroll-to-bottom button */}
+      {isMobile &&
+        currentQuestion.inputType !== "radio" &&
+        showScrollDownButton && (
+          <div className="fixed inset-x-0 bottom-0 flex justify-center items-end pb-20 z-20 pointer-events-none">
+            <motion.button
+              onClick={() => {
+                if (motionDivRef.current) {
+                  motionDivRef.current.scrollTo({
+                    top: motionDivRef.current.scrollHeight,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              className="p-3 rounded-full bg-secondary text-white shadow-md hover:bg-secondary/90 transition-colors animate-bounce pointer-events-auto"
+              aria-label="Scroll to bottom"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.5 }}
+              key={`bottom-next-${currentQuestionIndex}`}
+            >
+              <ChevronDown className="h-6 w-6" />
+            </motion.button>
+          </div>
         )}
     </div>
   );

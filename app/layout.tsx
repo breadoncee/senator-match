@@ -5,7 +5,7 @@ import "./globals.css";
 import { UTMProvider } from "../context/utm-context";
 import { AnalyticsProvider } from "../context/analytics-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
-
+import { SurveyProvider } from "@/context/survey-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -29,7 +29,9 @@ export default function RootLayout({
       <body className={`${inter.className} bg-white h-screen`}>
         <GoogleAnalytics gaId="G-LHF2QKMRK2" />
         <UTMProvider>
-          <AnalyticsProvider>{children}</AnalyticsProvider>
+          <AnalyticsProvider>
+            <SurveyProvider>{children}</SurveyProvider>
+          </AnalyticsProvider>
         </UTMProvider>
       </body>
     </html>

@@ -9,6 +9,7 @@ export const CandidateCard = ({
   candidate,
   onClick,
   isSelected,
+  isTopCandidate,
 }: CandidateCardProps) => {
   return (
     <motion.div
@@ -17,9 +18,9 @@ export const CandidateCard = ({
       transition={{ duration: 0.3 }}
       className={`relative rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
         isSelected
-          ? "border-blue-500 bg-blue-50 shadow-md"
-          : candidate.isTopMatch
-          ? "border-blue-500 hover:shadow-md"
+          ? "border-primary bg-primary/10 shadow-md"
+          : isTopCandidate
+          ? "border-accent bg-primary/10 shadow-lg hover:shadow-xl"
           : "border-gray-200 hover:border-gray-300 hover:shadow-md"
       }`}
       onClick={() => onClick(candidate.candidateId)}
@@ -30,11 +31,11 @@ export const CandidateCard = ({
           party={candidate.party}
           imageUrl={candidate.imageUrl || ""}
           matchScore={candidate.matchScore}
-          isTopMatch={!!candidate.isTopMatch}
+          isTopMatch={!!isTopCandidate}
           isExpanded={isSelected}
           onClick={() => {}}
         />
-        <TopMatchBadge show={!!candidate.isTopMatch} />
+        <TopMatchBadge show={!!isTopCandidate} />
       </div>
     </motion.div>
   );

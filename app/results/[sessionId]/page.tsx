@@ -120,7 +120,7 @@ export default function SharedResultsPage() {
             <p className="text-gray-600/90 mb-8">{error}</p>
             <Button
               onClick={handleTakeSurvey}
-              className="w-full bg-primary/85 hover:bg-primary/75 rounded-lg shadow-sm"
+              className="w-full bg-secondary hover:bg-secondary/90 rounded-lg shadow-sm"
             >
               Take the Survey Yourself
             </Button>
@@ -149,7 +149,7 @@ export default function SharedResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+    <div className="min-h-screen bg-white overflow-hidden">
       {/* Increased z-index for background shapes */}
       <BrandBackground className="screen-results" screenType="results" />
 
@@ -165,7 +165,7 @@ export default function SharedResultsPage() {
         >
           <div className="text-center mb-8">
             <motion.h1
-              className="text-2xl sm:text-3xl font-bold mb-3 text-primary/90"
+              className="text-2xl sm:text-3xl font-bold mb-3 text-primary"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -173,7 +173,7 @@ export default function SharedResultsPage() {
               Shared Senator Matches
             </motion.h1>
             <motion.p
-              className="text-gray-600/90 max-w-2xl mx-auto"
+              className="text-gray-600 max-w-2xl mx-auto"
               initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -195,8 +195,8 @@ export default function SharedResultsPage() {
                 }}
                 className="h-full"
               >
-                <Card className="overflow-hidden h-full flex flex-col shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px] border border-gray-100/80 bg-white/90 backdrop-blur-sm">
-                  <CardHeader className="bg-gradient-to-r from-primary/85 to-primary/75 text-white p-3 sm:p-4">
+                <Card className="overflow-hidden h-full flex flex-col shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px] border-gray-200 bg-white backdrop-blur-sm rounded-xl">
+                  <CardHeader className="bg-primary text-white p-3 sm:p-4">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2 sm:gap-3">
                         {candidate.imageUrl && (
@@ -212,7 +212,7 @@ export default function SharedResultsPage() {
                           {candidate.name}
                         </CardTitle>
                       </div>
-                      <div className="text-base sm:text-lg font-bold whitespace-nowrap bg-secondary/75 px-2 py-1 rounded-full">
+                      <div className="text-base sm:text-lg font-bold whitespace-nowrap bg-white/20 px-2 py-1 rounded-full">
                         {Math.round(candidate.matchScore * 100)}%
                       </div>
                     </div>
@@ -220,12 +220,12 @@ export default function SharedResultsPage() {
                       {candidate.party}
                     </p>
                   </CardHeader>
-                  <CardContent className="pt-3 sm:pt-4 p-3 sm:p-4 flex-grow flex flex-col bg-white/95">
+                  <CardContent className="pt-3 sm:pt-4 p-3 sm:p-4 flex-grow flex flex-col bg-white">
                     <div className="mb-3 sm:mb-4">
-                      <h3 className="font-medium text-xs sm:text-sm text-secondary/85 mb-1 sm:mb-2">
+                      <h3 className="font-medium text-xs sm:text-sm text-secondary mb-1 sm:mb-2">
                         KEY STANCES
                       </h3>
-                      <ul className="list-disc pl-4 sm:pl-5 space-y-0.5 sm:space-y-1 marker:text-primary/70">
+                      <ul className="list-disc pl-4 sm:pl-5 space-y-0.5 sm:space-y-1 marker:text-primary">
                         {candidate.keyStances
                           .slice(0, 3)
                           .map((stance: string, i: number) => (
@@ -240,7 +240,7 @@ export default function SharedResultsPage() {
                     </div>
 
                     <div className="mt-2 sm:mt-3">
-                      <h3 className="font-medium text-xs sm:text-sm text-secondary/85 mb-1 sm:mb-2">
+                      <h3 className="font-medium text-xs sm:text-sm text-secondary mb-1 sm:mb-2">
                         WHY THEY MATCHED
                       </h3>
                       <p className="text-xs text-gray-600">
@@ -253,39 +253,18 @@ export default function SharedResultsPage() {
             ))}
           </div>
 
-          <div className="text-center pb-8">
+          <div className="text-center mt-8 mb-12">
             <Button
               onClick={handleTakeSurvey}
-              className="px-8 py-3 text-base bg-primary/85 hover:bg-primary/75 shadow-sm hover:shadow-md transition-all duration-300 rounded-lg"
+              size="lg"
+              className="bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-lg shadow-md"
             >
               Take the Survey Yourself
             </Button>
-
-            <p className="text-xs text-gray-500/90 text-center mt-4">
-              SenatorMatch helps Filipino voters find their ideal senatorial
-              candidates.
-            </p>
           </div>
         </motion.div>
       </div>
-
-      {/* Custom non-sticky footer */}
-      <footer className="py-3 border-t border-gray-200 bg-primary/5 mt-8">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
-          <div className="flex items-center mb-2 sm:mb-0">
-            <Image
-              src="/datos-pilipinas-logo.svg"
-              alt="Datos Pilipinas Logo"
-              width={80}
-              height={40}
-              className="h-auto"
-            />
-          </div>
-          <div className="text-xs text-gray-500">
-            © 2025 All rights reserved
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

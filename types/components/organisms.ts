@@ -5,6 +5,7 @@ export type CandidateCardProps = {
   candidate: Candidate;
   onClick: (candidateId: string) => void;
   isSelected: boolean;
+  isTopCandidate?: boolean;
 };
 
 export type ResultsTemplateProps = {
