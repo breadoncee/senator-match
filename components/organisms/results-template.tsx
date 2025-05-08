@@ -112,7 +112,12 @@ export const ResultsTemplate = ({
           </CardContent>
         </Card>
 
-        <p className="text-sm text-gray-500 text-center mt-0 mb-10 max-w-3xl mx-auto">
+        <p className="text-sm text-gray-500 text-center mt-6">
+          Your responses are stored to help us improve the matching process and
+          provide better results in the future.
+        </p>
+
+        <p className="text-sm text-gray-500 text-center mt-0 mb-8 mx-auto">
           For more comprehensive information and data about all senatorial
           candidates, visit{" "}
           <a
@@ -138,49 +143,19 @@ export const ResultsTemplate = ({
 
           <Button
             variant="outline"
-            onClick={onRestart}
-            size="lg"
-            className="flex-1 py-6 text-lg border-primary text-primary hover:bg-primary/10"
-          >
-            <RefreshCw className="mr-2 h-5 w-5" />
-            Take Survey Again
-          </Button>
-        </div>
-
-        <p className="text-sm text-gray-500 text-center mt-6 mb-8">
-          Your responses are stored to help us improve the matching process and
-          provide better results in the future.
-        </p>
-
-        {/* Ballot Builder Promotion */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }} // Adjusted delay
-          className="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-md text-center mt-8 pt-6 border-t border-gray-100" // Added top border and padding top
-        >
-          <h2 className="text-xl font-semibold mb-3 text-primary">
-            Plan Your Vote for 2025!
-          </h2>
-          <p className="text-gray-600 mb-5 text-sm">
-            Want to build your complete ballot for the upcoming elections? Visit
-            our partner site to prepare for all national positions.
-          </p>
-          <Button
             onClick={() => {
               window.open(
                 "https://kodigoeleksyon2025.netlify.app/national?utm_source=candidatematch&utm_medium=website&utm_campaign=national_info",
                 "_blank"
               );
             }}
-            className="bg-secondary hover:bg-secondary/90 text-white px-6 py-3 text-base rounded-lg group" // Changed from bg-accent
-            size="lg" // Made button larger
+            size="lg"
+            className="flex-1 py-6 text-lg border-primary text-primary hover:bg-primary/10"
           >
             Go to Kodigo Eleksyon 2025
             <ExternalLink className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />{" "}
-            {/* Added Icon */}
           </Button>
-        </motion.div>
+        </div>
 
         <motion.div
           className="mt-10 mb-8"

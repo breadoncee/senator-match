@@ -88,6 +88,10 @@ export default function SharedResultsPage() {
     }
   };
 
+  const handleExploreVeripolAiAgents = () => {
+    router.push("/veripol-ai-agents");
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden">
@@ -273,13 +277,21 @@ export default function SharedResultsPage() {
             ))}
           </div>
 
-          <div className="text-center mt-8 mb-12">
+          <div className="flex flex-row gap-4 justify-center mt-8 mb-12">
             <Button
               onClick={handleTakeSurvey}
               size="lg"
-              className="bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-lg shadow-md"
+              className="bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-lg"
             >
               Take the Survey Yourself
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleExploreVeripolAiAgents}
+              size="lg"
+              className="py-3 px-6 rounded-lg border-primary text-primary hover:bg-primary/10"
+            >
+              Explore Veripol&apos;s Election AI Agents
             </Button>
           </div>
         </motion.div>

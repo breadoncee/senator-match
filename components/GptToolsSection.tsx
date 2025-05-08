@@ -6,8 +6,7 @@ interface GptToolCardProps {
   title: string;
   description: string;
   link: string;
-  imageSrc: string; // Path to your image in the public folder
-  gptsLink: string;
+  imageSrc: string;
 }
 
 const gptToolsData: GptToolCardProps[] = [
@@ -17,21 +16,18 @@ const gptToolsData: GptToolCardProps[] = [
       "Everything you need to know about the 2025 elections and its candidates",
     link: "https://chatgpt.com/g/g-681cabfa13ec8191a1f9394b4ae9f85f-veripol-s-election-super-assistant",
     imageSrc: "/veripol-election-super-assistant.png",
-    gptsLink: "chatgpt.com",
   },
   {
     title: "VeriPol's Local Candidate Research Assistant",
     description: "Help people research about local candidates",
     link: "https://chatgpt.com/g/g-681ca83da97c819181a34b28ab4b25b0-veripol-s-local-candidate-research-assistant",
     imageSrc: "/veripol-local-research-assistant.png",
-    gptsLink: "chatgpt.com",
   },
   {
-    title: "VeriPol's PartylistGPT",
+    title: "VeriPol's Partylist Research Assistant",
     description: "Helps Voters find partylists that align with their values",
     link: "https://chatgpt.com/g/g-681c9b0513488191baa67dfd5d2195b6-veripol-s-partylistgpt",
     imageSrc: "/veripol-partylist-assistant.png",
-    gptsLink: "chatgpt.com",
   },
 ];
 
@@ -40,7 +36,6 @@ const GptToolCard: React.FC<GptToolCardProps> = ({
   description,
   link,
   imageSrc,
-  gptsLink,
 }) => {
   // Animation variants for individual cards
   const cardVariants = {
@@ -61,11 +56,6 @@ const GptToolCard: React.FC<GptToolCardProps> = ({
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-xl font-semibold mb-2 text-gray-800">{title}</h3>
         <p className="text-gray-600 text-sm mb-4 flex-grow">{description}</p>
-        <div className="flex items-center text-sm text-primary font-medium mb-4">
-          {/* You might want a generic GPT logo here if available */}
-          {/* <Image src="/gpts-logo-placeholder.png" alt="GPT" width={16} height={16} className="mr-2" /> */}
-          <span>{gptsLink}</span>
-        </div>
         <a
           href={link}
           target="_blank"
@@ -79,7 +69,9 @@ const GptToolCard: React.FC<GptToolCardProps> = ({
   );
 };
 
-const GptToolsSection: React.FC = () => {
+const GptToolsSection: React.FC<{ isPage?: boolean }> = ({
+  isPage = false,
+}) => {
   // Variants for the container to stagger children
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -93,16 +85,18 @@ const GptToolsSection: React.FC = () => {
   };
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12">
       <div className="container mx-auto px-4">
-        <motion.h2
-          className="text-3xl font-bold text-center text-primary mb-10"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          Explore VeriPol GPTs
-        </motion.h2>
+        {!isPage && (
+          <motion.h2
+            className="text-3xl font-bold text-center text-primary mb-10"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            Explore VeriPol GPTs
+          </motion.h2>
+        )}
         {/* This div is now a motion.div and applies containerVariants */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
