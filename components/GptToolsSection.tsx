@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image"; // Assuming you'll use next/image for optimized images
+import { motion } from "framer-motion"; // Added motion import
 
 interface GptToolCardProps {
   title: string;
@@ -41,8 +42,17 @@ const GptToolCard: React.FC<GptToolCardProps> = ({
   imageSrc,
   gptsLink,
 }) => {
+  // Animation variants for individual cards
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl">
+    <motion.div
+      className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl"
+      variants={cardVariants} // Apply variants here, parent will control stagger
+    >
       <div className="relative w-full h-48">
         {" "}
         {/* Adjust height as needed */}
@@ -65,22 +75,45 @@ const GptToolCard: React.FC<GptToolCardProps> = ({
           Try it out
         </a>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const GptToolsSection: React.FC = () => {
+  // Variants for the container to stagger children
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-primary mb-10">
+        <motion.h2
+          className="text-3xl font-bold text-center text-primary mb-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           Explore VeriPol GPTs
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        </motion.h2>
+        {/* This div is now a motion.div and applies containerVariants */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {gptToolsData.map((tool) => (
             <GptToolCard key={tool.title} {...tool} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

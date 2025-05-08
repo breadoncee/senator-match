@@ -3,7 +3,7 @@
 import { useSurvey } from "@/context/survey-context";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
 
 export const LandingScreen = () => {
@@ -70,6 +70,30 @@ export const LandingScreen = () => {
           <span className="inline-block w-2 h-2 bg-accent rounded-full"></span>
           2-minute survey
         </motion.p>
+      </motion.div>
+
+      {/* Disclaimer Banner */}
+      <motion.div
+        className="mt-12 p-4 bg-gray-50 border-gray-400 text-gray-700 rounded-md shadow-sm"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+      >
+        <div className="flex items-start">
+          <div className="flex-shrink-0 pt-0.5">
+            <Info className="h-5 w-5 text-gray-500" aria-hidden="true" />
+          </div>
+          <div className="ml-3 flex-1">
+            <p className="text-sm font-medium text-gray-800">Disclaimer</p>
+            <p className="mt-1 text-sm text-gray-600">
+              SenatorMatch is a volunteer-led, non-commercial tool for
+              informational use only. Matches are based on limited data and
+              survey responses, and may not reflect full candidate platforms. We
+              do not endorse any candidate or party. Always do your own research
+              before voting.
+            </p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
