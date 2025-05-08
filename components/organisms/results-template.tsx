@@ -11,6 +11,7 @@ import { CandidateProfileModal } from "../organisms/candidate-profile-modal";
 import { getCandidateProfile } from "../../services/candidate-profile-service";
 import { type CandidateProfile } from "@/types/candidate-profile";
 import { type ResultsTemplateProps } from "@/types/components/organisms";
+import GptToolsSection from "../GptToolsSection";
 
 export const ResultsTemplate = ({
   matches,
@@ -150,6 +151,10 @@ export const ResultsTemplate = ({
           Your responses are stored to help us improve the matching process and
           provide better results in the future.
         </p>
+
+        <div className="mt-10 mb-8">
+          <GptToolsSection />
+        </div>
       </motion.div>
 
       <AnimatePresence>

@@ -22,11 +22,18 @@ export function Footer() {
           <div className="flex items-center mb-4 md:mb-0">
             <Image
               src="/datos-pilipinas-logo.svg"
-              alt="SenatorMatch Logo"
+              alt="Datos Pilipinas Logo"
               width={100}
-              height={50}
+              height={40}
               priority
-              className="w-[100px] h-[50px] mr-2"
+              className="mr-3"
+            />
+            <Image
+              src="/veripol-logo.png"
+              alt="VeriPol Logo"
+              width={40}
+              height={40}
+              className="mr-3"
             />
             <span className="text-sm font-semibold text-gray-700">
               SenatorMatch
