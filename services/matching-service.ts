@@ -1,6 +1,5 @@
 "use client";
 
-import { candidates } from "@/data/mock-candidates";
 import type { SurveyQuestion } from "@/data/survey-questions";
 import { surveyQuestions } from "@/data/survey-questions";
 

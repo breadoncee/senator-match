@@ -315,6 +315,7 @@ export default function SurveyScreen() {
                   className="w-full"
                 >
                   <div
+                    onClick={() => handleRadioChange(option.value)}
                     className={`flex items-center w-full p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
                       currentAnswer === option.value
                         ? "border-primary bg-primary/5"
